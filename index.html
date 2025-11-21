@@ -147,7 +147,7 @@
         }
         .gallery-category small { display: block; font-size: 0.7em; color: var(--accent-color); margin-top: 5px; }
 
-        /* --- モーダル (スライドアニメーション対応) --- */
+        /* --- モーダル (アニメーション設定) --- */
         .modal {
             display: none; position: fixed; z-index: 200; left: 0; top: 0;
             width: 100%; height: 100%; overflow: hidden;
@@ -158,44 +158,29 @@
             position: relative; margin: auto; padding: 0;
             width: 100%; max-width: 1200px; height: 100vh;
             display: flex; justify-content: center; align-items: center;
-            overflow: hidden; /* 枠外のスライドを隠す */
         }
         .mySlides {
             display: none; /* 基本非表示 */
-            position: absolute; /* 重ねて表示 */
-            width: 90%; max-width: 1000px; max-height: 85vh;
+            max-width: 90%; max-height: 85vh;
             object-fit: contain;
             border: 1px solid #4a4a4a; box-shadow: 0 0 50px rgba(0,0,0,0.5);
             background: var(--bg-color);
             user-select: none;
-            /* スライドアニメーションの設定 */
-            transition: transform 0.5s ease-in-out, opacity 0.5s ease-in-out;
-            opacity: 0;
         }
         
-        /* アクティブなスライド */
-        .mySlides.active {
-            display: block;
-            transform: translateX(0);
-            opacity: 1;
-            z-index: 2;
+        /* アニメーション定義 */
+        @keyframes slideInRight {
+            from { opacity: 0; transform: translateX(50px); }
+            to { opacity: 1; transform: translateX(0); }
         }
-        
-        /* 右に待機中（次に来る画像） */
-        .mySlides.next {
-            display: block;
-            transform: translateX(100%);
-            opacity: 0;
-            z-index: 1;
+        @keyframes slideInLeft {
+            from { opacity: 0; transform: translateX(-50px); }
+            to { opacity: 1; transform: translateX(0); }
         }
-        
-        /* 左に待機中（前に戻る画像） */
-        .mySlides.prev {
-            display: block;
-            transform: translateX(-100%);
-            opacity: 0;
-            z-index: 1;
-        }
+
+        /* クラス付与でアニメーション発動 */
+        .anim-right { animation: slideInRight 0.5s ease-out; }
+        .anim-left { animation: slideInLeft 0.5s ease-out; }
         
         .close {
             color: var(--accent-color); position: absolute; top: 30px; right: 40px;
@@ -263,15 +248,9 @@
     <section class="message">
         <div class="section-head"><span>Message</span><h2>Greeting</h2></div>
         <p>
-            本日は私たちの結婚式にお越しいただき<br>
-            ありがとうございます。<br>
-            <br>
-            ゆかりのある鎌倉で挙式を挙げられたことを<br>
-            とても嬉しく思います。<br>
-            <br>
-            皆様にもお喜びいただけるよう<br>
-            準備してきましたので、<br>
-            ぜひ美味しい料理やお酒をお楽しみください。
+            本日は私たちの結婚式にお越しいただきありがとうございます。<br>
+            ゆかりのある鎌倉で挙式を挙げられたことをとても嬉しく思います。<br>
+            皆様にもお喜びいただけるよう準備してきましたので、ぜひ美味しい料理やお酒をお楽しみください。
         </p>
         <div class="sign">Masafumi & Nao</div>
     </section>
@@ -457,4 +436,156 @@
             <img class="mySlides scenery-slide" src="./kamakura5.jpg">
             <img class="mySlides scenery-slide" src="./kamakura6.jpg">
             <img class="mySlides scenery-slide" src="./kamakura7.jpg">
-            <img class="mySlides scenery
+            <img class="mySlides scenery-slide" src="./tokushima1.jpg">
+            <img class="mySlides scenery-slide" src="./tokushima2.jpg">
+            <img class="mySlides scenery-slide" src="./tokushima3.jpg">
+            <img class="mySlides scenery-slide" src="./tokushima4.jpg">
+            <img class="mySlides scenery-slide" src="./tokushima5.jpg">
+            <img class="mySlides scenery-slide" src="./tokushima6.jpg">
+            <a class="prev" onclick="plusSlides(-1, 'scenery')">&#10094;</a><a class="next" onclick="plusSlides(1, 'scenery')">&#10095;</a>
+        </div>
+    </div>
+
+    <div id="travelModal" class="modal">
+        <span class="close" onclick="closeGallery('travel')">&times;</span>
+        <div class="modal-content">
+            <img class="mySlides travel-slide" src="./tohoku1.jpg">
+            <img class="mySlides travel-slide" src="./tohoku2.jpg">
+            <img class="mySlides travel-slide" src="./tohoku5.jpg">
+            <img class="mySlides travel-slide" src="./kinjo1.jpg">
+            <img class="mySlides travel-slide" src="./kinjo2.jpg">
+            <img class="mySlides travel-slide" src="./kinjo3.jpg">
+            <img class="mySlides travel-slide" src="./kinjo4.jpg">
+            <img class="mySlides travel-slide" src="./kinjo5.jpg">
+            <img class="mySlides travel-slide" src="./kinjo6.jpg">
+            <img class="mySlides travel-slide" src="./kinjo7.jpg">
+            <img class="mySlides travel-slide" src="./kinjo8.jpg">
+            <img class="mySlides travel-slide" src="./sonota1.jpg">
+            <img class="mySlides travel-slide" src="./sonota2.jpg">
+            <img class="mySlides travel-slide" src="./sonota3.jpg">
+            <img class="mySlides travel-slide" src="./sonota4.jpg">
+            <img class="mySlides travel-slide" src="./sonota5.jpg">
+            <img class="mySlides travel-slide" src="./sonota6.jpg">
+            <img class="mySlides travel-slide" src="./sonota7.jpg">
+            <img class="mySlides travel-slide" src="./sonota8.jpg">
+            <img class="mySlides travel-slide" src="./sonota9.jpg">
+            <img class="mySlides travel-slide" src="./sonota11.jpg">
+            <img class="mySlides travel-slide" src="./sonota12.jpg">
+            <a class="prev" onclick="plusSlides(-1, 'travel')">&#10094;</a><a class="next" onclick="plusSlides(1, 'travel')">&#10095;</a>
+        </div>
+    </div>
+
+    <footer><p>&copy; Masafumi & Nao</p></footer>
+
+    <script>
+        var slideIndices = { 'friends': 1, 'jazz': 1, 'trekking': 1, 'family': 1, 'scenery': 1, 'travel': 1 };
+        var currentGalleryType = '';
+        var autoSlideTimer = null;
+
+        function openGallery(type) {
+            currentGalleryType = type;
+            document.getElementById(type + "Modal").style.display = "block";
+            showSlides(slideIndices[type], type, 'next'); // 初期表示は右からスライド
+            startAutoSlide();
+        }
+
+        function closeGallery(type) {
+            document.getElementById(type + "Modal").style.display = "none";
+            currentGalleryType = '';
+            stopAutoSlide();
+        }
+
+        function plusSlides(n, type) {
+            stopAutoSlide();
+            // 方向（次か前か）を判定して渡す
+            var direction = (n > 0) ? 'next' : 'prev';
+            showSlides(slideIndices[type] += n, type, direction);
+            startAutoSlide();
+        }
+
+        // スライド表示関数（アニメーション方向を指定可能に）
+        function showSlides(n, type, direction) {
+            var i;
+            var slides = document.getElementsByClassName(type + "-slide");
+            if (n > slides.length) { slideIndices[type] = 1 }
+            if (n < 1) { slideIndices[type] = slides.length }
+            
+            for (i = 0; i < slides.length; i++) {
+                slides[i].style.display = "none";
+                // アニメーションクラスをリセット
+                slides[i].classList.remove("anim-right", "anim-left");
+            }
+            
+            // 次の画像を表示し、アニメーションクラスを付与
+            var currentSlide = slides[slideIndices[type] - 1];
+            currentSlide.style.display = "block";
+            
+            // 方向に応じてクラスを使い分け（右からイン か 左からイン）
+            if (direction === 'prev') {
+                currentSlide.classList.add("anim-left");
+            } else {
+                currentSlide.classList.add("anim-right");
+            }
+        }
+
+        function startAutoSlide() {
+            stopAutoSlide();
+            autoSlideTimer = setInterval(() => {
+                if (currentGalleryType) {
+                    showSlides(slideIndices[currentGalleryType] += 1, currentGalleryType, 'next');
+                }
+            }, 3000);
+        }
+
+        function stopAutoSlide() {
+            if (autoSlideTimer) {
+                clearInterval(autoSlideTimer);
+                autoSlideTimer = null;
+            }
+        }
+
+        window.onclick = function(event) {
+            if (event.target.classList.contains('modal')) {
+                var modals = document.getElementsByClassName('modal');
+                for (var i = 0; i < modals.length; i++) {
+                    modals[i].style.display = "none";
+                }
+                currentGalleryType = '';
+                stopAutoSlide();
+            }
+        }
+
+        // --- スマホ用スワイプ処理 ---
+        let touchStartX = 0;
+        let touchEndX = 0;
+
+        const modalContents = document.querySelectorAll('.modal');
+
+        modalContents.forEach(modal => {
+            modal.addEventListener('touchstart', e => {
+                touchStartX = e.changedTouches[0].screenX;
+                stopAutoSlide();
+            }, {passive: true});
+
+            modal.addEventListener('touchend', e => {
+                touchEndX = e.changedTouches[0].screenX;
+                handleSwipe();
+                startAutoSlide();
+            }, {passive: true});
+        });
+
+        function handleSwipe() {
+            if (!currentGalleryType) return;
+            // 50px以上のスワイプで検知
+            if (touchEndX < touchStartX - 50) {
+                // 左へスワイプ（次へ）
+                showSlides(slideIndices[currentGalleryType] += 1, currentGalleryType, 'next');
+            }
+            if (touchEndX > touchStartX + 50) {
+                // 右へスワイプ（前へ）
+                showSlides(slideIndices[currentGalleryType] -= 1, currentGalleryType, 'prev');
+            }
+        }
+    </script>
+</body>
+</html>
