@@ -40,7 +40,9 @@
         }
         .hero-bg {
             position: absolute; top: 0; left: 0; width: 100%; height: 100%;
-            background: url('./header.jpg') no-repeat center center/cover;
+            /* ★変更点：指輪の位置に合わせて上下位置を調整（center → center 65%） */
+            /* 画像の上から65%の位置（指輪のあたり）を画面の中心に持ってくる設定です */
+            background: url('./header.jpg') no-repeat center 65%/cover;
             filter: brightness(0.5); z-index: 0;
         }
         .hero-content {
@@ -208,6 +210,11 @@
         /* スマホ向け調整 */
         @media (max-width: 768px) {
             .hero { height: 50vh; min-height: 350px; }
+            /* ★変更点：スマホでのヘッダー画像位置調整 */
+            .hero-bg {
+                /* スマホは画面が狭いので、さらに少し下（75%あたり）を中心に持ってくると指輪が綺麗に見えます */
+                background-position: center 75%; 
+            }
             .hero h1 { font-size: 2.4rem; line-height: 1.2; margin-bottom: 10px; }
             .hero .sub-title { font-size: 0.9rem; letter-spacing: 0.15em; }
             .hero-content { padding: 30px 15px; width: 90%; box-sizing: border-box; }
@@ -485,7 +492,7 @@
         function openGallery(type) {
             currentGalleryType = type;
             document.getElementById(type + "Modal").style.display = "block";
-            showSlides(slideIndices[type], type, 'next'); // 初期表示は右からスライド
+            showSlides(slideIndices[type], type, 'next');
             startAutoSlide();
         }
 
@@ -497,13 +504,11 @@
 
         function plusSlides(n, type) {
             stopAutoSlide();
-            // 方向（次か前か）を判定して渡す
             var direction = (n > 0) ? 'next' : 'prev';
             showSlides(slideIndices[type] += n, type, direction);
             startAutoSlide();
         }
 
-        // スライド表示関数（アニメーション方向を指定可能に）
         function showSlides(n, type, direction) {
             var i;
             var slides = document.getElementsByClassName(type + "-slide");
@@ -512,15 +517,12 @@
             
             for (i = 0; i < slides.length; i++) {
                 slides[i].style.display = "none";
-                // アニメーションクラスをリセット
                 slides[i].classList.remove("anim-right", "anim-left");
             }
             
-            // 次の画像を表示し、アニメーションクラスを付与
             var currentSlide = slides[slideIndices[type] - 1];
             currentSlide.style.display = "block";
             
-            // 方向に応じてクラスを使い分け（右からイン か 左からイン）
             if (direction === 'prev') {
                 currentSlide.classList.add("anim-left");
             } else {
@@ -576,13 +578,10 @@
 
         function handleSwipe() {
             if (!currentGalleryType) return;
-            // 50px以上のスワイプで検知
             if (touchEndX < touchStartX - 50) {
-                // 左へスワイプ（次へ）
                 showSlides(slideIndices[currentGalleryType] += 1, currentGalleryType, 'next');
             }
             if (touchEndX > touchStartX + 50) {
-                // 右へスワイプ（前へ）
                 showSlides(slideIndices[currentGalleryType] -= 1, currentGalleryType, 'prev');
             }
         }
