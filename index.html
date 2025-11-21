@@ -40,7 +40,6 @@
         }
         .hero-bg {
             position: absolute; top: 0; left: 0; width: 100%; height: 100%;
-            /* PC用は変更なし */
             background: url('./header.jpg') no-repeat center 65%/cover;
             filter: brightness(0.5); z-index: 0;
         }
@@ -48,7 +47,7 @@
             position: relative; text-align: center; z-index: 10;
             padding: 80px 40px;
             border: 1px solid rgba(212, 175, 55, 0.5);
-            background: rgba(44, 44, 44, 0.6);
+            background: rgba(44, 44, 44, 0.3);
             backdrop-filter: blur(2px);
             box-shadow: 0 0 30px rgba(0,0,0,0.3);
         }
@@ -122,6 +121,36 @@
             margin-bottom: 5px;
         }
 
+        /* --- Movie Section (YouTube) --- */
+        .movie-container {
+            text-align: center;
+            margin-top: 60px;
+            padding: 20px;
+            background: var(--card-bg);
+            border: 1px solid #4a4a4a;
+            border-radius: 8px;
+        }
+        .video-wrapper {
+            position: relative;
+            padding-bottom: 56.25%; /* 16:9のアスペクト比 */
+            height: 0;
+            overflow: hidden;
+            max-width: 100%;
+        }
+        .video-wrapper iframe {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            border: 1px solid var(--accent-color);
+        }
+        .movie-caption {
+            margin-top: 15px;
+            font-size: 0.9rem;
+            color: var(--text-muted);
+        }
+
         /* --- Gallery --- */
         .gallery-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 20px; }
         .gallery-item {
@@ -148,7 +177,7 @@
         }
         .gallery-category small { display: block; font-size: 0.7em; color: var(--accent-color); margin-top: 5px; }
 
-        /* --- モーダル (アニメーション設定) --- */
+        /* --- ★復元したモーダル用CSS（これがないと動きません） --- */
         .modal {
             display: none; position: fixed; z-index: 200; left: 0; top: 0;
             width: 100%; height: 100%; overflow: hidden;
@@ -209,11 +238,7 @@
         /* スマホ向け調整 */
         @media (max-width: 768px) {
             .hero { height: 50vh; min-height: 350px; }
-            /* ★変更点：スマホでのヘッダー画像位置調整 */
-            .hero-bg {
-                /* 左40%（左寄せ）、縦50%（中央）に設定 */
-                background-position: 40% 50%; 
-            }
+            .hero-bg { background-position: 40% 50%; }
             .hero h1 { font-size: 2.4rem; line-height: 1.2; margin-bottom: 10px; }
             .hero .sub-title { font-size: 0.9rem; letter-spacing: 0.15em; }
             .hero-content { padding: 30px 15px; width: 90%; box-sizing: border-box; }
@@ -278,7 +303,7 @@
                         </li>
                         <li>
                             <strong>Music</strong>
-                            サザンオールスターズ、藤井風、相対性理論、Durdn、Herbie Hancock、Roy Hargrove、Eagles、VanHalen、Frank Zappa、Cimafunk、Fred Wesley、Poncho Sanchez、Santana 等
+                            サザンオールスターズ、藤井風、相対性理論、Durdn、Herbie Hancock、Roy Hargrove、Eagles、Van Halen、Frank Zappa、Cimafunk、Fred Wesley、Poncho Sanchez、Santana 等
                         </li>
                     </ul>
                 </div>
@@ -297,12 +322,24 @@
                         </li>
                         <li>
                             <strong>Music</strong>
-                            サザンオールスターズ、藤井風、きくお、電ｷ鯨、Yellow Magic Orchestra、Richard Bona、Joe Zawinul、Santana、Francis Poulenc 等
+                            サザンオールスターズ、藤井風、きくお、電ｷ鯨、Yellow Magic Orchestra、Count Basie、Richard Bona、Joe Zawinul、Joe Dyson、Kenny Dorham、Manu Dibango、Santana、Francis Poulenc、Johannes Brahms 等
                         </li>
                     </ul>
                 </div>
             </div>
         </div>
+
+        <div class="movie-container">
+            <div class="section-head" style="margin-bottom: 40px; margin-top: 20px;">
+                <span>Performance</span>
+                <h3 style="font-family: var(--font-en); color: var(--accent-color);">Yamano Big Jazz Contest</h3>
+            </div>
+            <div class="video-wrapper">
+                <iframe width="560" height="315" src="https://www.youtube.com/embed/xAMNHsdgO_Q?si=HMVYjqts3-JcpIqA" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
+            </div>
+            <p class="movie-caption">二人が出演した山野ビッグバンドジャズコンテストの映像です</p>
+        </div>
+
     </section>
 
     <section class="gallery">
