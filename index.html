@@ -40,6 +40,7 @@
         }
         .hero-bg {
             position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+            /* PC用は変更なし */
             background: url('./header.jpg') no-repeat center 65%/cover;
             filter: brightness(0.5); z-index: 0;
         }
@@ -47,8 +48,7 @@
             position: relative; text-align: center; z-index: 10;
             padding: 80px 40px;
             border: 1px solid rgba(212, 175, 55, 0.5);
-            /* ★変更点：背景の透過度を0.6から0.3に変更して、より透明にしました */
-            background: rgba(44, 44, 44, 0.3);
+            background: rgba(44, 44, 44, 0.6);
             backdrop-filter: blur(2px);
             box-shadow: 0 0 30px rgba(0,0,0,0.3);
         }
@@ -209,7 +209,9 @@
         /* スマホ向け調整 */
         @media (max-width: 768px) {
             .hero { height: 50vh; min-height: 350px; }
+            /* ★変更点：スマホでのヘッダー画像位置調整 */
             .hero-bg {
+                /* 左40%（左寄せ）、縦50%（中央）に設定 */
                 background-position: 40% 50%; 
             }
             .hero h1 { font-size: 2.4rem; line-height: 1.2; margin-bottom: 10px; }
@@ -326,6 +328,7 @@
     <div id="friendsModal" class="modal">
         <span class="close" onclick="closeGallery('friends')">&times;</span>
         <div class="modal-content">
+            <img class="mySlides friends-slide" src="./PB080017.jpg">
             <img class="mySlides friends-slide" src="./sarcle1.jpg">
             <img class="mySlides friends-slide" src="./sarcle2.jpg">
             <img class="mySlides friends-slide" src="./sarcle3.jpg">
@@ -519,4 +522,68 @@
             var currentSlide = slides[slideIndices[type] - 1];
             currentSlide.style.display = "block";
             
-            if (direction === 'prev')
+            if (direction === 'prev') {
+                currentSlide.classList.add("anim-left");
+            } else {
+                currentSlide.classList.add("anim-right");
+            }
+        }
+
+        function startAutoSlide() {
+            stopAutoSlide();
+            autoSlideTimer = setInterval(() => {
+                if (currentGalleryType) {
+                    showSlides(slideIndices[currentGalleryType] += 1, currentGalleryType, 'next');
+                }
+            }, 3000);
+        }
+
+        function stopAutoSlide() {
+            if (autoSlideTimer) {
+                clearInterval(autoSlideTimer);
+                autoSlideTimer = null;
+            }
+        }
+
+        window.onclick = function(event) {
+            if (event.target.classList.contains('modal')) {
+                var modals = document.getElementsByClassName('modal');
+                for (var i = 0; i < modals.length; i++) {
+                    modals[i].style.display = "none";
+                }
+                currentGalleryType = '';
+                stopAutoSlide();
+            }
+        }
+
+        // --- スマホ用スワイプ処理 ---
+        let touchStartX = 0;
+        let touchEndX = 0;
+
+        const modalContents = document.querySelectorAll('.modal');
+
+        modalContents.forEach(modal => {
+            modal.addEventListener('touchstart', e => {
+                touchStartX = e.changedTouches[0].screenX;
+                stopAutoSlide();
+            }, {passive: true});
+
+            modal.addEventListener('touchend', e => {
+                touchEndX = e.changedTouches[0].screenX;
+                handleSwipe();
+                startAutoSlide();
+            }, {passive: true});
+        });
+
+        function handleSwipe() {
+            if (!currentGalleryType) return;
+            if (touchEndX < touchStartX - 50) {
+                showSlides(slideIndices[currentGalleryType] += 1, currentGalleryType, 'next');
+            }
+            if (touchEndX > touchStartX + 50) {
+                showSlides(slideIndices[currentGalleryType] -= 1, currentGalleryType, 'prev');
+            }
+        }
+    </script>
+</body>
+</html>
