@@ -40,8 +40,7 @@
         }
         .hero-bg {
             position: absolute; top: 0; left: 0; width: 100%; height: 100%;
-            /* ★変更点：指輪の位置に合わせて上下位置を調整（center → center 65%） */
-            /* 画像の上から65%の位置（指輪のあたり）を画面の中心に持ってくる設定です */
+            /* PC用は変更なし */
             background: url('./header.jpg') no-repeat center 65%/cover;
             filter: brightness(0.5); z-index: 0;
         }
@@ -212,8 +211,8 @@
             .hero { height: 50vh; min-height: 350px; }
             /* ★変更点：スマホでのヘッダー画像位置調整 */
             .hero-bg {
-                /* スマホは画面が狭いので、さらに少し下（75%あたり）を中心に持ってくると指輪が綺麗に見えます */
-                background-position: center 75%; 
+                /* 左40%（左寄せ）、縦50%（中央）に設定 */
+                background-position: 40% 50%; 
             }
             .hero h1 { font-size: 2.4rem; line-height: 1.2; margin-bottom: 10px; }
             .hero .sub-title { font-size: 0.9rem; letter-spacing: 0.15em; }
