@@ -25,7 +25,7 @@
             font-family: var(--font-jp);
             color: var(--text-main);
             background-color: var(--bg-color);
-            line-height: 2.0; /* 行間を自然に戻しました */
+            line-height: 2.0;
             letter-spacing: 0.05em;
         }
         h1, h2, h3 { font-family: var(--font-en); font-weight: normal; margin: 0; color: var(--accent-color); }
@@ -83,8 +83,9 @@
 
         /* --- Message --- */
         .message p {
-            text-align: center; margin-bottom: 2em; font-size: 1.1rem;
-            /* ※以前の両端揃え設定を削除しました */
+            text-align: center; /* 強制的な両端揃えを廃止し、自然な中央揃えに */
+            margin-bottom: 2em; font-size: 1.1rem;
+            line-height: 2.4; /* 読みやすいように行間を少し広めに */
         }
         .sign {
             text-align: right; font-family: var(--font-en); font-size: 1.8rem;
@@ -115,10 +116,9 @@
         
         .bio-list { list-style: none; padding: 0; margin: 0; font-size: 1rem; color: var(--text-main); }
         .bio-list li { margin-bottom: 15px; border-bottom: 1px solid #4a4a4a; padding-bottom: 10px; }
-        /* 項目名をブロック表示にして改行させるスタイル */
         .bio-list strong {
             color: var(--accent-color); font-weight: 500; font-size: 0.9rem; letter-spacing: 0.1em;
-            display: block; /* これで項目名の下で必ず改行されます */
+            display: block; /* 項目名の下で改行 */
             margin-bottom: 5px;
         }
 
@@ -153,6 +153,8 @@
             display: none; position: fixed; z-index: 200; left: 0; top: 0;
             width: 100%; height: 100%; overflow: hidden;
             background-color: rgba(44,44,44,0.98);
+            /* タッチ操作の無効化を防ぐ設定 */
+            touch-action: pan-y; 
         }
         .modal-content {
             position: relative; margin: auto; padding: 0;
@@ -164,6 +166,8 @@
             object-fit: contain;
             border: 1px solid #4a4a4a; box-shadow: 0 0 50px rgba(0,0,0,0.5);
             background: var(--bg-color);
+            /* スワイプ時のアニメーション滑らかさ */
+            user-select: none;
         }
         .mySlides.active { display: block; animation: fade 0.6s; }
         @keyframes fade { from {opacity: 0} to {opacity: 1} }
@@ -191,16 +195,14 @@
             border-top: 1px solid #4a4a4a;
         }
 
-        /* ★★★ スマホ向け調整 ★★★ */
+        /* スマホ向け調整 */
         @media (max-width: 768px) {
-            /* ヘッダー画像が見切れないよう高さを調整 */
             .hero { height: 50vh; min-height: 350px; }
             .hero h1 { font-size: 2.4rem; line-height: 1.2; margin-bottom: 10px; }
             .hero .sub-title { font-size: 0.9rem; letter-spacing: 0.15em; }
             .hero-content { padding: 30px 15px; width: 90%; box-sizing: border-box; }
 
-            /* メッセージの改行をPC通りに反映させるためbrの無効化を削除 */
-            .message p { padding: 0 10px; }
+            .message p { padding: 0; text-align: center; } /* スマホでも自然な中央揃え */
 
             section { padding: 60px 20px; }
             .section-head { margin-bottom: 40px; }
@@ -215,6 +217,7 @@
 
             .gallery-grid { grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); }
 
+            /* 矢印ボタンの調整 */
             .prev, .next {
                 font-size: 24px; padding: 15px; margin-top: -30px;
                 background-color: rgba(0,0,0,0.4); border-radius: 4px;
@@ -238,16 +241,9 @@
     <section class="message">
         <div class="section-head"><span>Message</span><h2>Greeting</h2></div>
         <p>
-            本日は私たちの結婚式にお越しいただき<br>
-            ありがとうございます。<br>
-            <br>
-            ゆかりのある鎌倉で挙式できたことを<br>
-            とても嬉しく思います。<br>
-            <br>
-            皆様にもお喜びいただけるよう<br>
-            準備してきましたので、<br>
-            ぜひ美味しいお料理やお酒を<br>
-            お楽しみください。
+            本日は私たちの結婚式にお越しいただきありがとうございます。<br>
+            ゆかりのある鎌倉で挙式を挙げられたことをとても嬉しく思います。<br>
+            皆様にもお喜びいただけるよう準備してきましたので、ぜひ美味しい料理やお酒をお楽しみください。
         </p>
         <div class="sign">Masafumi & Nao</div>
     </section>
@@ -474,18 +470,76 @@
     <footer><p>&copy; Masafumi & Nao</p></footer>
 
     <script>
+        // --- スライドショー管理 ---
         var slideIndices = { 'friends': 1, 'jazz': 1, 'trekking': 1, 'family': 1, 'scenery': 1, 'travel': 1 };
-        function openGallery(type) { document.getElementById(type + "Modal").style.display = "block"; showSlides(slideIndices[type], type); }
-        function closeGallery(type) { document.getElementById(type + "Modal").style.display = "none"; }
-        function plusSlides(n, type) { showSlides(slideIndices[type] += n, type); }
+        // 開いているギャラリーの種類を記録する変数
+        var currentGalleryType = '';
+
+        function openGallery(type) {
+            currentGalleryType = type; // 開いたタイプを記録
+            document.getElementById(type + "Modal").style.display = "block";
+            showSlides(slideIndices[type], type);
+        }
+
+        function closeGallery(type) {
+            document.getElementById(type + "Modal").style.display = "none";
+            currentGalleryType = ''; // リセット
+        }
+
+        function plusSlides(n, type) {
+            showSlides(slideIndices[type] += n, type);
+        }
+
         function showSlides(n, type) {
-            var i; var slides = document.getElementsByClassName(type + "-slide");
+            var i;
+            var slides = document.getElementsByClassName(type + "-slide");
             if (n > slides.length) { slideIndices[type] = 1 }
             if (n < 1) { slideIndices[type] = slides.length }
-            for (i = 0; i < slides.length; i++) { slides[i].classList.remove("active"); }
+            
+            for (i = 0; i < slides.length; i++) {
+                slides[i].classList.remove("active");
+            }
             slides[slideIndices[type] - 1].classList.add("active");
         }
-        window.onclick = function(event) { if (event.target.classList.contains('modal')) { event.target.style.display = "none"; } }
+
+        window.onclick = function(event) {
+            if (event.target.classList.contains('modal')) {
+                event.target.style.display = "none";
+                currentGalleryType = '';
+            }
+        }
+
+        // --- ★スマホ用スワイプ処理 ---
+        let touchStartX = 0;
+        let touchEndX = 0;
+
+        // すべてのモーダルコンテンツに対してタッチイベントを設定
+        const modalContents = document.querySelectorAll('.modal');
+
+        modalContents.forEach(modal => {
+            modal.addEventListener('touchstart', e => {
+                touchStartX = e.changedTouches[0].screenX;
+            });
+
+            modal.addEventListener('touchend', e => {
+                touchEndX = e.changedTouches[0].screenX;
+                handleSwipe();
+            });
+        });
+
+        function handleSwipe() {
+            if (!currentGalleryType) return; // ギャラリーが開いてなければ何もしない
+
+            // スワイプの距離が50px以上なら反応させる
+            if (touchEndX < touchStartX - 50) {
+                // 左へスワイプ（指を右から左へ） -> 次へ
+                plusSlides(1, currentGalleryType);
+            }
+            if (touchEndX > touchStartX + 50) {
+                // 右へスワイプ（指を左から右へ） -> 前へ
+                plusSlides(-1, currentGalleryType);
+            }
+        }
     </script>
 </body>
 </html>
