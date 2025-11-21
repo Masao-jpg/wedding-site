@@ -83,9 +83,8 @@
 
         /* --- Message --- */
         .message p {
-            text-align: center; /* 強制的な両端揃えを廃止し、自然な中央揃えに */
-            margin-bottom: 2em; font-size: 1.1rem;
-            line-height: 2.4; /* 読みやすいように行間を少し広めに */
+            text-align: center; margin-bottom: 2em; font-size: 1.1rem;
+            line-height: 2.4;
         }
         .sign {
             text-align: right; font-family: var(--font-en); font-size: 1.8rem;
@@ -118,7 +117,7 @@
         .bio-list li { margin-bottom: 15px; border-bottom: 1px solid #4a4a4a; padding-bottom: 10px; }
         .bio-list strong {
             color: var(--accent-color); font-weight: 500; font-size: 0.9rem; letter-spacing: 0.1em;
-            display: block; /* 項目名の下で改行 */
+            display: block;
             margin-bottom: 5px;
         }
 
@@ -148,29 +147,55 @@
         }
         .gallery-category small { display: block; font-size: 0.7em; color: var(--accent-color); margin-top: 5px; }
 
-        /* --- モーダル --- */
+        /* --- モーダル (スライドアニメーション対応) --- */
         .modal {
             display: none; position: fixed; z-index: 200; left: 0; top: 0;
             width: 100%; height: 100%; overflow: hidden;
             background-color: rgba(44,44,44,0.98);
-            /* タッチ操作の無効化を防ぐ設定 */
-            touch-action: pan-y; 
+            touch-action: pan-y;
         }
         .modal-content {
             position: relative; margin: auto; padding: 0;
             width: 100%; max-width: 1200px; height: 100vh;
             display: flex; justify-content: center; align-items: center;
+            overflow: hidden; /* 枠外のスライドを隠す */
         }
         .mySlides {
-            display: none; max-width: 90%; max-height: 85vh;
+            display: none; /* 基本非表示 */
+            position: absolute; /* 重ねて表示 */
+            width: 90%; max-width: 1000px; max-height: 85vh;
             object-fit: contain;
             border: 1px solid #4a4a4a; box-shadow: 0 0 50px rgba(0,0,0,0.5);
             background: var(--bg-color);
-            /* スワイプ時のアニメーション滑らかさ */
             user-select: none;
+            /* スライドアニメーションの設定 */
+            transition: transform 0.5s ease-in-out, opacity 0.5s ease-in-out;
+            opacity: 0;
         }
-        .mySlides.active { display: block; animation: fade 0.6s; }
-        @keyframes fade { from {opacity: 0} to {opacity: 1} }
+        
+        /* アクティブなスライド */
+        .mySlides.active {
+            display: block;
+            transform: translateX(0);
+            opacity: 1;
+            z-index: 2;
+        }
+        
+        /* 右に待機中（次に来る画像） */
+        .mySlides.next {
+            display: block;
+            transform: translateX(100%);
+            opacity: 0;
+            z-index: 1;
+        }
+        
+        /* 左に待機中（前に戻る画像） */
+        .mySlides.prev {
+            display: block;
+            transform: translateX(-100%);
+            opacity: 0;
+            z-index: 1;
+        }
         
         .close {
             color: var(--accent-color); position: absolute; top: 30px; right: 40px;
@@ -202,8 +227,6 @@
             .hero .sub-title { font-size: 0.9rem; letter-spacing: 0.15em; }
             .hero-content { padding: 30px 15px; width: 90%; box-sizing: border-box; }
 
-            .message p { padding: 0; text-align: center; } /* スマホでも自然な中央揃え */
-
             section { padding: 60px 20px; }
             .section-head { margin-bottom: 40px; }
             .section-head h2 { font-size: 2.2rem; }
@@ -217,7 +240,6 @@
 
             .gallery-grid { grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); }
 
-            /* 矢印ボタンの調整 */
             .prev, .next {
                 font-size: 24px; padding: 15px; margin-top: -30px;
                 background-color: rgba(0,0,0,0.4); border-radius: 4px;
@@ -241,9 +263,15 @@
     <section class="message">
         <div class="section-head"><span>Message</span><h2>Greeting</h2></div>
         <p>
-            本日は私たちの結婚式にお越しいただきありがとうございます。<br>
-            ゆかりのある鎌倉で挙式を挙げられたことをとても嬉しく思います。<br>
-            皆様にもお喜びいただけるよう準備してきましたので、ぜひ美味しい料理やお酒をお楽しみください。
+            本日は私たちの結婚式にお越しいただき<br>
+            ありがとうございます。<br>
+            <br>
+            ゆかりのある鎌倉で挙式を挙げられたことを<br>
+            とても嬉しく思います。<br>
+            <br>
+            皆様にもお喜びいただけるよう<br>
+            準備してきましたので、<br>
+            ぜひ美味しい料理やお酒をお楽しみください。
         </p>
         <div class="sign">Masafumi & Nao</div>
     </section>
@@ -315,6 +343,7 @@
     <div id="friendsModal" class="modal">
         <span class="close" onclick="closeGallery('friends')">&times;</span>
         <div class="modal-content">
+            <img class="mySlides friends-slide" src="./PB080017.jpg">
             <img class="mySlides friends-slide" src="./sarcle1.jpg">
             <img class="mySlides friends-slide" src="./sarcle2.jpg">
             <img class="mySlides friends-slide" src="./sarcle3.jpg">
@@ -428,118 +457,4 @@
             <img class="mySlides scenery-slide" src="./kamakura5.jpg">
             <img class="mySlides scenery-slide" src="./kamakura6.jpg">
             <img class="mySlides scenery-slide" src="./kamakura7.jpg">
-            <img class="mySlides scenery-slide" src="./tokushima1.jpg">
-            <img class="mySlides scenery-slide" src="./tokushima2.jpg">
-            <img class="mySlides scenery-slide" src="./tokushima3.jpg">
-            <img class="mySlides scenery-slide" src="./tokushima4.jpg">
-            <img class="mySlides scenery-slide" src="./tokushima5.jpg">
-            <img class="mySlides scenery-slide" src="./tokushima6.jpg">
-            <a class="prev" onclick="plusSlides(-1, 'scenery')">&#10094;</a><a class="next" onclick="plusSlides(1, 'scenery')">&#10095;</a>
-        </div>
-    </div>
-
-    <div id="travelModal" class="modal">
-        <span class="close" onclick="closeGallery('travel')">&times;</span>
-        <div class="modal-content">
-            <img class="mySlides travel-slide" src="./tohoku1.jpg">
-            <img class="mySlides travel-slide" src="./tohoku2.jpg">
-            <img class="mySlides travel-slide" src="./tohoku5.jpg">
-            <img class="mySlides travel-slide" src="./kinjo1.jpg">
-            <img class="mySlides travel-slide" src="./kinjo2.jpg">
-            <img class="mySlides travel-slide" src="./kinjo3.jpg">
-            <img class="mySlides travel-slide" src="./kinjo4.jpg">
-            <img class="mySlides travel-slide" src="./kinjo5.jpg">
-            <img class="mySlides travel-slide" src="./kinjo6.jpg">
-            <img class="mySlides travel-slide" src="./kinjo7.jpg">
-            <img class="mySlides travel-slide" src="./kinjo8.jpg">
-            <img class="mySlides travel-slide" src="./sonota1.jpg">
-            <img class="mySlides travel-slide" src="./sonota2.jpg">
-            <img class="mySlides travel-slide" src="./sonota3.jpg">
-            <img class="mySlides travel-slide" src="./sonota4.jpg">
-            <img class="mySlides travel-slide" src="./sonota5.jpg">
-            <img class="mySlides travel-slide" src="./sonota6.jpg">
-            <img class="mySlides travel-slide" src="./sonota7.jpg">
-            <img class="mySlides travel-slide" src="./sonota8.jpg">
-            <img class="mySlides travel-slide" src="./sonota9.jpg">
-            <img class="mySlides travel-slide" src="./sonota11.jpg">
-            <img class="mySlides travel-slide" src="./sonota12.jpg">
-            <a class="prev" onclick="plusSlides(-1, 'travel')">&#10094;</a><a class="next" onclick="plusSlides(1, 'travel')">&#10095;</a>
-        </div>
-    </div>
-
-    <footer><p>&copy; Masafumi & Nao</p></footer>
-
-    <script>
-        // --- スライドショー管理 ---
-        var slideIndices = { 'friends': 1, 'jazz': 1, 'trekking': 1, 'family': 1, 'scenery': 1, 'travel': 1 };
-        // 開いているギャラリーの種類を記録する変数
-        var currentGalleryType = '';
-
-        function openGallery(type) {
-            currentGalleryType = type; // 開いたタイプを記録
-            document.getElementById(type + "Modal").style.display = "block";
-            showSlides(slideIndices[type], type);
-        }
-
-        function closeGallery(type) {
-            document.getElementById(type + "Modal").style.display = "none";
-            currentGalleryType = ''; // リセット
-        }
-
-        function plusSlides(n, type) {
-            showSlides(slideIndices[type] += n, type);
-        }
-
-        function showSlides(n, type) {
-            var i;
-            var slides = document.getElementsByClassName(type + "-slide");
-            if (n > slides.length) { slideIndices[type] = 1 }
-            if (n < 1) { slideIndices[type] = slides.length }
-            
-            for (i = 0; i < slides.length; i++) {
-                slides[i].classList.remove("active");
-            }
-            slides[slideIndices[type] - 1].classList.add("active");
-        }
-
-        window.onclick = function(event) {
-            if (event.target.classList.contains('modal')) {
-                event.target.style.display = "none";
-                currentGalleryType = '';
-            }
-        }
-
-        // --- ★スマホ用スワイプ処理 ---
-        let touchStartX = 0;
-        let touchEndX = 0;
-
-        // すべてのモーダルコンテンツに対してタッチイベントを設定
-        const modalContents = document.querySelectorAll('.modal');
-
-        modalContents.forEach(modal => {
-            modal.addEventListener('touchstart', e => {
-                touchStartX = e.changedTouches[0].screenX;
-            });
-
-            modal.addEventListener('touchend', e => {
-                touchEndX = e.changedTouches[0].screenX;
-                handleSwipe();
-            });
-        });
-
-        function handleSwipe() {
-            if (!currentGalleryType) return; // ギャラリーが開いてなければ何もしない
-
-            // スワイプの距離が50px以上なら反応させる
-            if (touchEndX < touchStartX - 50) {
-                // 左へスワイプ（指を右から左へ） -> 次へ
-                plusSlides(1, currentGalleryType);
-            }
-            if (touchEndX > touchStartX + 50) {
-                // 右へスワイプ（指を左から右へ） -> 前へ
-                plusSlides(-1, currentGalleryType);
-            }
-        }
-    </script>
-</body>
-</html>
+            <img class="mySlides scenery
