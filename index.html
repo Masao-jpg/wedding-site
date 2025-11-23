@@ -324,17 +324,16 @@
             appId: "1:868959025752:web:c491b3ff353c894a69a82d"
         };
 
-        // Initialize
         const app = initializeApp(firebaseConfig);
         const db = getFirestore(app);
         const storage = getStorage(app);
         const COLLECTION_NAME = "photos";
 
-        // --- 2. Image Compression Logic ---
+        // --- 2. 爆速圧縮ロジック (800px / quality 0.5) ---
         const compressImage = async (file) => {
             return new Promise((resolve, reject) => {
-                const MAX_WIDTH = 1200; // 横幅上限
-                const MAX_HEIGHT = 1200; // 縦幅上限
+                const MAX_WIDTH = 800;  // さらに小さく
+                const MAX_HEIGHT = 800;
                 const reader = new FileReader();
                 reader.readAsDataURL(file);
                 reader.onload = (event) => {
@@ -343,8 +342,6 @@
                     img.onload = () => {
                         let width = img.width;
                         let height = img.height;
-
-                        // サイズ調整
                         if (width > height) {
                             if (width > MAX_WIDTH) {
                                 height *= MAX_WIDTH / width;
@@ -356,17 +353,17 @@
                                 height = MAX_HEIGHT;
                             }
                         }
-
                         const canvas = document.createElement('canvas');
                         canvas.width = width;
                         canvas.height = height;
                         const ctx = canvas.getContext('2d');
                         ctx.drawImage(img, 0, 0, width, height);
-
-                        // CanvasからBlobへ変換 (JPEG, 品質0.7)
+                        
+                        // 圧縮率を上げて容量削減
                         canvas.toBlob((blob) => {
-                            resolve(blob);
-                        }, 'image/jpeg', 0.7);
+                            if (blob) resolve(blob);
+                            else reject(new Error("Compression failed"));
+                        }, 'image/jpeg', 0.5);
                     };
                     img.onerror = (err) => reject(err);
                 };
@@ -374,7 +371,7 @@
             });
         };
 
-        // --- 3. Upload Function ---
+        // --- 3. Upload Function (詳細ステータス表示) ---
         const fileInput = document.getElementById('fileInput');
         const statusText = document.getElementById('uploadStatus');
         const uploadLabel = document.getElementById('uploadBtnLabel');
@@ -383,32 +380,31 @@
             const files = e.target.files;
             if (files.length === 0) return;
 
-            // UIロック
             fileInput.disabled = true;
             uploadLabel.classList.add('disabled');
-            uploadLabel.innerText = "Uploading...";
+            uploadLabel.innerText = "処理中...";
 
             let successCount = 0;
+            let errorMsg = "";
 
             for (let i = 0; i < files.length; i++) {
                 const file = files[i];
-                statusText.innerText = `圧縮中... (${i + 1}/${files.length})`;
-                statusText.style.color = "var(--accent-color)";
-
                 try {
-                    // 圧縮
+                    // ステータス：圧縮
+                    statusText.innerText = `[${i + 1}/${files.length}] 画像を圧縮しています...`;
+                    statusText.style.color = "var(--accent-color)";
                     const compressedBlob = await compressImage(file);
                     
-                    // アップロード
-                    statusText.innerText = `送信中... (${i + 1}/${files.length})`;
+                    // ステータス：送信
+                    statusText.innerText = `[${i + 1}/${files.length}] サーバーに送信中...`;
                     const fileName = `${Date.now()}_${Math.random().toString(36).substring(2)}.jpg`;
                     const storageRef = ref(storage, `uploads/${fileName}`);
+                    
                     await uploadBytes(storageRef, compressedBlob);
                     
-                    // URL取得
+                    // ステータス：登録
+                    statusText.innerText = `[${i + 1}/${files.length}] 完了！リスト更新中...`;
                     const downloadURL = await getDownloadURL(storageRef);
-
-                    // DB保存
                     await addDoc(collection(db, COLLECTION_NAME), {
                         url: downloadURL,
                         timestamp: serverTimestamp()
@@ -416,81 +412,82 @@
                     successCount++;
 
                 } catch (error) {
-                    console.error("Upload failed:", error);
-                    statusText.innerText = "エラーが発生しました";
-                    statusText.style.color = "red";
+                    console.error(error);
+                    errorMsg = `エラー: ${error.message || "送信できませんでした"}`;
+                    // 権限エラーの場合のヒント
+                    if(error.code === 'storage/unauthorized') {
+                        errorMsg = "エラー: 書き込み権限がありません。FirebaseのRules設定を確認してください。";
+                    }
                 }
             }
 
-            // 完了処理
             fileInput.value = "";
             fileInput.disabled = false;
             uploadLabel.classList.remove('disabled');
             uploadLabel.innerText = "Upload Photos";
-            statusText.innerText = `${successCount}枚の写真をアップロードしました！`;
-            statusText.style.color = "#fff";
-            setTimeout(() => statusText.innerText = "", 5000);
+            
+            if (errorMsg) {
+                statusText.innerText = errorMsg;
+                statusText.style.color = "red";
+            } else {
+                statusText.innerText = `${successCount}枚 アップロード完了！`;
+                statusText.style.color = "#fff";
+                setTimeout(() => statusText.innerText = "", 5000);
+            }
         });
 
-        // --- 4. Gallery Display (Realtime) ---
+        // --- 4. Gallery Display ---
         const galleryGrid = document.getElementById('galleryGrid');
-        let allPhotos = []; // 全写真データ保持用
+        let allPhotos = [];
         let displayedCount = 0;
         const INITIAL_LOAD = 12;
         const LOAD_STEP = 12;
 
-        // データを監視して取得（並び替えはクライアント側で行う簡易実装）
         const q = query(collection(db, COLLECTION_NAME));
         
         onSnapshot(q, (snapshot) => {
             const tempPhotos = [];
             snapshot.forEach((doc) => {
                 const data = doc.data();
-                // timestampがない場合(書き込み直後)は現在時刻扱いで先頭にする
                 const ts = data.timestamp ? data.timestamp.toMillis() : Date.now();
                 tempPhotos.push({ id: doc.id, url: data.url, ts: ts });
             });
-
-            // 新しい順にソート
+            // 新しい順
             tempPhotos.sort((a, b) => b.ts - a.ts);
             allPhotos = tempPhotos;
-
-            // ギャラリー再描画（最初はINITIAL_LOAD分だけ）
             renderGallery();
         });
 
         function renderGallery() {
             galleryGrid.innerHTML = "";
             const modalContent = document.getElementById('modalContent');
-            modalContent.innerHTML = ""; // モーダルの中身もリセット
+            // モーダル内の動的スライドをクリア（固定ボタン等は残すため工夫が必要だが簡易的に全クリアして再構築）
+            // ※今回はシンプルに、既存のスライド要素を一度空にして再生成します
+            while(modalContent.firstChild) {
+                modalContent.removeChild(modalContent.firstChild);
+            }
 
-            // もっと見るボタン制御
             const loadMoreArea = document.getElementById('loadMoreArea');
             const limit = displayedCount === 0 ? INITIAL_LOAD : displayedCount;
-            displayedCount = limit; // 更新
+            displayedCount = limit;
 
-            // 表示ループ
             for (let i = 0; i < allPhotos.length; i++) {
                 if (i >= limit) break;
                 const photo = allPhotos[i];
 
-                // グリッドアイテム作成
                 const card = document.createElement('div');
                 card.className = 'photo-card';
                 card.innerHTML = `<img src="${photo.url}" alt="Guest Photo">`;
-                // クリックイベント（グローバル関数経由ではなく直接バインド）
-                card.onclick = () => openModalIndex(i);
+                card.onclick = () => window.openModalIndex(i);
                 galleryGrid.appendChild(card);
 
-                // モーダル用スライド作成
                 const slide = document.createElement('img');
                 slide.src = photo.url;
                 slide.className = 'mySlides';
-                slide.id = `slide-${i}`;
+                slide.style.display = 'none'; // 初期状態は非表示
                 modalContent.appendChild(slide);
             }
 
-            // もっと見るボタン表示判定
             if (allPhotos.length > limit) {
                 loadMoreArea.style.display = 'block';
             } else {
@@ -498,14 +495,12 @@
             }
         }
 
-        // もっと見るボタン
         document.getElementById('loadMoreBtn').addEventListener('click', () => {
             displayedCount += LOAD_STEP;
             renderGallery();
         });
 
-
-        // --- 5. Modal Logic (Global scope for HTML onclick) ---
+        // --- 5. Modal Logic ---
         let currentSlideIndex = 0;
         let autoSlideTimer = null;
 
@@ -522,43 +517,44 @@
         };
 
         window.changeSlide = (n) => {
-            stopAutoSlide(); // 手動操作でタイマーリセット
-            
-            // アニメーション方向判定
+            stopAutoSlide();
             const direction = n > 0 ? 'next' : 'prev';
-            const slides = document.getElementsByClassName("mySlides");
             
+            // 配列範囲チェック
+            if (allPhotos.length === 0) return;
+            
+            const slides = document.getElementsByClassName("mySlides");
             // 現在のスライドを隠す
             if(slides[currentSlideIndex]) {
-               slides[currentSlideIndex].className = "mySlides"; // クラスリセット
+               slides[currentSlideIndex].className = "mySlides"; 
+               slides[currentSlideIndex].style.display = "none";
             }
 
-            // インデックス更新
             currentSlideIndex += n;
-            if (currentSlideIndex >= slides.length) currentSlideIndex = 0;
-            if (currentSlideIndex < 0) currentSlideIndex = slides.length - 1;
+            if (currentSlideIndex >= allPhotos.length) currentSlideIndex = 0; // 表示中の枚数ではなく全枚数でループ
+            if (currentSlideIndex >= slides.length) currentSlideIndex = 0; // 安全策
+            if (currentSlideIndex < 0) currentSlideIndex = Math.min(allPhotos.length, slides.length) - 1;
 
             updateModalDisplay(direction);
             startAutoSlide();
         };
 
         function updateModalDisplay(direction = 'next') {
-            // 表示更新処理
             const slides = document.getElementsByClassName("mySlides");
-            // 全て隠す
+            if(slides.length === 0) return;
+            
+            // 全非表示
             for(let i=0; i<slides.length; i++) {
-                slides[i].classList.remove('active', 'next-enter', 'prev-enter');
                 slides[i].style.display = 'none';
+                slides[i].classList.remove('active', 'next-enter', 'prev-enter');
             }
             
             const target = slides[currentSlideIndex];
             if(target) {
                 target.style.display = 'block';
-                // アニメーションクラス付与
                 if(direction === 'next') target.classList.add('next-enter');
                 else target.classList.add('prev-enter');
                 
-                // 少し待ってactiveにする（transition発火）
                 setTimeout(() => {
                     target.classList.remove('next-enter', 'prev-enter');
                     target.classList.add('active');
@@ -596,11 +592,9 @@
             if (touchEndX > touchStartX + 50) window.changeSlide(-1);
         }, {passive: true});
 
-        // モーダル外クリックで閉じる
         window.onclick = (event) => {
             if (event.target == modal) window.closeModal();
         };
-
     </script>
 
 </body>
