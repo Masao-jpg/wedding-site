@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Masafumi & Nao's Wedding</title>
+    <title>Thank You - Masafumi & Nao</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;600&family=Noto+Serif+JP:wght@300;500&display=swap" rel="stylesheet">
@@ -19,60 +19,50 @@
             --font-jp: 'Noto Serif JP', serif;
         }
 
-        /* --- ベース設定 --- */
         body {
             margin: 0; padding: 0;
             font-family: var(--font-jp);
             color: var(--text-main);
             background-color: var(--bg-color);
-            line-height: 2.0;
-            letter-spacing: 0.05em;
+            line-height: 2.2;
+            letter-spacing: 0.08em;
         }
         h1, h2, h3 { font-family: var(--font-en); font-weight: normal; margin: 0; color: var(--accent-color); }
         img { max-width: 100%; height: auto; display: block; }
 
-        /* --- ヒーローセクション --- */
+        /* --- Hero --- */
         .hero {
-            height: 100vh; position: relative; display: flex;
+            height: 60vh; position: relative; display: flex;
             justify-content: center; align-items: center;
             overflow: hidden;
             border-bottom: 1px solid var(--accent-color);
         }
         .hero-bg {
             position: absolute; top: 0; left: 0; width: 100%; height: 100%;
-            /* スマホ向けに見切れにくい位置調整 */
+            /* スマホでの見切れ対策：位置調整 */
             background: url('./header.jpg') no-repeat center 65%/cover;
-            filter: brightness(0.5); z-index: 0;
+            filter: brightness(0.4); z-index: 0;
         }
         .hero-content {
             position: relative; text-align: center; z-index: 10;
-            padding: 80px 40px;
+            padding: 60px 40px;
             border: 1px solid rgba(212, 175, 55, 0.5);
             background: rgba(44, 44, 44, 0.3);
             backdrop-filter: blur(2px);
             box-shadow: 0 0 30px rgba(0,0,0,0.3);
         }
         .hero h1 {
-            font-size: 4.5rem; letter-spacing: 0.05em; margin-bottom: 15px;
+            font-size: 4rem; letter-spacing: 0.05em; margin-bottom: 0;
             text-transform: uppercase;
             text-shadow: 0 0 10px rgba(0,0,0,0.5);
             color: #fff;
         }
-        .hero .sub-title {
-            font-size: 1.3rem; letter-spacing: 0.3em; margin-bottom: 25px; display: block;
-            color: var(--accent-color);
-        }
-        .hero .location {
-            font-family: var(--font-jp); font-size: 1rem; margin-top: 30px;
-            display: inline-block; border-top: 1px solid var(--accent-color); padding-top: 15px;
-            color: var(--text-muted);
-        }
 
-        /* --- セクション共通 --- */
+        /* --- Common --- */
         section { padding: 100px 20px; max-width: 1000px; margin: 0 auto; }
         .section-head { text-align: center; margin-bottom: 60px; }
         .section-head h2 {
-            font-size: 3rem; margin-bottom: 15px; letter-spacing: 0.1em;
+            font-size: 2.5rem; margin-bottom: 15px; letter-spacing: 0.1em;
             background: linear-gradient(to right, #bf953f, #fcf6ba, #b38728, #fbf5b7, #aa771c);
             -webkit-background-clip: text;
             color: transparent;
@@ -82,191 +72,150 @@
             font-family: var(--font-en); text-transform: uppercase; letter-spacing: 0.3em;
         }
 
-        /* --- Message (左詰めに修正) --- */
+        /* --- Message --- */
         .message p {
-            text-align: left; /* ★ここを左詰めに変更 */
-            margin-bottom: 2em; font-size: 1.1rem;
+            text-align: left; margin-bottom: 2em; font-size: 1.1rem;
             line-height: 2.4;
-            max-width: 600px; /* 読みやすい幅に制限 */
-            margin-left: auto; margin-right: auto; /* ブロック自体は中央に */
+            max-width: 600px; margin-left: auto; margin-right: auto;
         }
         .sign {
-            text-align: right; font-family: var(--font-en); font-size: 1.8rem;
-            color: var(--accent-color); margin-top: 50px; font-style: italic;
+            text-align: right; font-family: var(--font-en); font-size: 1.5rem;
+            color: var(--accent-color); margin-top: 40px; font-style: italic;
             max-width: 600px; margin-left: auto; margin-right: auto;
         }
 
-        /* --- Biography (左詰めに修正) --- */
-        .bio-container { display: flex; flex-direction: column; gap: 80px; }
-        .bio-card {
-            display: flex; align-items: center; gap: 50px;
-            padding: 40px;
-            background: var(--card-bg);
-            border: 1px solid #4a4a4a;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
-            border-radius: 8px;
-        }
-        .bio-card:nth-child(even) { 
-            flex-direction: row-reverse; 
-            text-align: left; /* ★ここを左詰めに変更（以前はrightでした） */
-        }
-        .bio-img { width: 280px; flex-shrink: 0; position: relative; }
-        .bio-img img {
-            width: 100%; height: 350px; object-fit: cover;
-            border: 1px solid var(--accent-color);
-            padding: 5px;
-            background: var(--bg-color);
-        }
-        .bio-content { flex: 1; }
-        .bio-content h3 { font-family: var(--font-jp); font-size: 2rem; margin-bottom: 5px; color: #fff; }
-        .bio-content .name-en { font-family: var(--font-en); color: var(--accent-color); font-size: 1.2rem; display: block; margin-bottom: 30px; }
-        
-        .bio-list { list-style: none; padding: 0; margin: 0; font-size: 1rem; color: var(--text-main); }
-        .bio-list li { margin-bottom: 15px; border-bottom: 1px solid #4a4a4a; padding-bottom: 10px; }
-        .bio-list strong {
-            color: var(--accent-color); font-weight: 500; font-size: 0.9rem; letter-spacing: 0.1em;
-            display: block;
-            margin-bottom: 5px;
-        }
-
-        /* --- Movie (YouTube) --- */
-        .movie-section {
-            margin-top: 80px;
-            text-align: center;
-        }
-        .video-container {
-            position: relative;
-            padding-bottom: 56.25%; /* 16:9 */
-            height: 0;
-            overflow: hidden;
-            max-width: 100%;
-            border: 1px solid #4a4a4a;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
-        }
-        .video-container iframe {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-        }
-        .movie-caption {
-            margin-top: 15px;
-            color: var(--text-muted);
-            font-size: 0.9rem;
-        }
-
         /* --- Gallery --- */
-        .gallery-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 20px; }
-        .gallery-item {
-            position: relative; overflow: hidden;
-            aspect-ratio: 1 / 1; cursor: pointer;
-            border: 1px solid #4a4a4a;
-            transition: border-color 0.3s;
-            border-radius: 8px;
+        .gallery-section { padding-bottom: 40px; }
+        .gallery-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
+            gap: 2px;
         }
-        .gallery-item:hover { border-color: var(--accent-color); }
-        .gallery-item img {
-            width: 100%; height: 100%; object-fit: cover;
-            transition: transform 0.6s cubic-bezier(0.25, 0.46, 0.45, 0.94);
-            filter: brightness(0.9);
+        @media (min-width: 768px) {
+            .gallery-grid { grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); gap: 10px; }
         }
-        .gallery-item:hover img { transform: scale(1.1); filter: brightness(1); }
-        
-        .gallery-category {
-            position: absolute; bottom: 0; left: 0; width: 100%;
-            background: linear-gradient(to top, rgba(44,44,44,0.9), transparent);
-            padding: 20px; box-sizing: border-box;
-            color: #fff; text-shadow: 0 2px 4px rgba(0,0,0,0.5);
-            font-family: var(--font-en);
-        }
-        .gallery-category small { display: block; font-size: 0.7em; color: var(--accent-color); margin-top: 5px; }
 
-        /* --- ★★★ 復活させたモーダル用CSS ★★★ --- */
+        .photo-card {
+            position: relative;
+            aspect-ratio: 1 / 1; /* 正方形固定 */
+            overflow: hidden;
+            background: #000;
+            cursor: pointer;
+        }
+        .photo-card img {
+            width: 100%; height: 100%; object-fit: cover;
+            transition: transform 0.5s;
+            opacity: 0; animation: fadeIn 1s forwards;
+        }
+        .photo-card:hover img { transform: scale(1.1); opacity: 0.8; }
+        @keyframes fadeIn { to { opacity: 1; } }
+
+        /* Load More Button */
+        .load-more-area {
+            text-align: center; margin-top: 40px;
+            display: none; /* 最初は隠す（JSで制御） */
+        }
+        .btn-outline {
+            display: inline-block; padding: 10px 30px;
+            border: 1px solid #666; color: #ccc;
+            background: transparent; font-family: var(--font-en);
+            cursor: pointer; transition: 0.3s;
+        }
+        .btn-outline:hover { border-color: var(--accent-color); color: var(--accent-color); }
+
+        /* --- Upload --- */
+        .upload-section { padding-top: 20px; text-align: center; }
+        .upload-container {
+            margin: 0 auto 60px; padding: 40px;
+            border: 1px dashed #555; border-radius: 8px;
+            background: rgba(0,0,0,0.2); max-width: 600px;
+        }
+        .upload-note { font-size: 0.9rem; color: var(--text-muted); margin-bottom: 20px; }
+        .file-input-label {
+            display: inline-block; padding: 15px 40px;
+            background: var(--accent-color); color: #fff;
+            font-family: var(--font-en); font-size: 1.2rem;
+            cursor: pointer; border-radius: 30px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+            transition: transform 0.1s, background 0.3s;
+        }
+        .file-input-label:active { transform: scale(0.95); }
+        .file-input-label.disabled { background: #555; cursor: not-allowed; }
+        #fileInput { display: none; }
+        #uploadStatus { margin-top: 20px; font-size: 0.9rem; min-height: 1.5em; }
+
+        /* --- Link to History --- */
+        .history-link-section {
+            text-align: center; padding: 80px 20px;
+            background-color: var(--card-bg);
+            border-top: 1px solid #4a4a4a;
+        }
+        .btn-gold {
+            display: inline-block; padding: 15px 40px;
+            border: 1px solid var(--accent-color); color: var(--accent-color);
+            text-decoration: none; font-family: var(--font-en); font-size: 1.1rem;
+            transition: 0.3s; background: transparent; letter-spacing: 0.1em;
+        }
+        .btn-gold:hover {
+            background: var(--accent-color); color: #fff;
+            box-shadow: 0 0 15px rgba(212, 175, 55, 0.6);
+        }
+
+        /* --- Modal (Popup) --- */
         .modal {
-            display: none; position: fixed; z-index: 200; left: 0; top: 0;
+            display: none; position: fixed; z-index: 999; left: 0; top: 0;
             width: 100%; height: 100%; overflow: hidden;
-            background-color: rgba(44,44,44,0.98);
+            background-color: rgba(15,15,15,0.98);
             touch-action: pan-y;
         }
         .modal-content {
             position: relative; margin: auto; padding: 0;
-            width: 100%; max-width: 1200px; height: 100vh;
+            width: 100%; height: 100vh;
             display: flex; justify-content: center; align-items: center;
         }
         .mySlides {
-            display: none; /* 基本非表示 */
-            max-width: 90%; max-height: 85vh;
+            display: none; max-width: 100%; max-height: 100vh;
             object-fit: contain;
-            border: 1px solid #4a4a4a; box-shadow: 0 0 50px rgba(0,0,0,0.5);
-            background: var(--bg-color);
-            user-select: none;
+            /* アニメーション */
+            position: absolute;
+            opacity: 0;
+            transition: transform 0.4s ease-out, opacity 0.4s ease-out;
         }
-        
-        /* アニメーション定義 */
-        @keyframes slideInRight {
-            from { opacity: 0; transform: translateX(50px); }
-            to { opacity: 1; transform: translateX(0); }
-        }
-        @keyframes slideInLeft {
-            from { opacity: 0; transform: translateX(-50px); }
-            to { opacity: 1; transform: translateX(0); }
-        }
+        .mySlides.active { display: block; opacity: 1; transform: translateX(0); z-index: 2; }
+        .mySlides.next-enter { display: block; opacity: 0; transform: translateX(50px); z-index: 1; }
+        .mySlides.prev-enter { display: block; opacity: 0; transform: translateX(-50px); z-index: 1; }
 
-        /* クラス付与でアニメーション発動 */
-        .anim-right { animation: slideInRight 0.5s ease-out; }
-        .anim-left { animation: slideInLeft 0.5s ease-out; }
-        
         .close {
-            color: var(--accent-color); position: absolute; top: 30px; right: 40px;
-            font-size: 50px; font-weight: normal; cursor: pointer; z-index: 201;
-            transition: color 0.3s;
+            color: #fff; position: absolute; top: 20px; right: 20px;
+            font-size: 40px; font-weight: bold; cursor: pointer; z-index: 1000;
+            text-shadow: 0 0 10px rgba(0,0,0,0.8);
+            background: rgba(0,0,0,0.3); width: 50px; height: 50px; line-height: 50px;
+            text-align: center; border-radius: 50%;
         }
-        .close:hover { color: #fff; }
-        
         .prev, .next {
             cursor: pointer; position: absolute; top: 50%; width: auto;
-            padding: 25px; margin-top: -50px; color: var(--accent-color);
-            font-size: 40px; transition: 0.3s; user-select: none; z-index: 201;
-            background: transparent;
+            padding: 20px; margin-top: -50px; color: #fff;
+            font-weight: bold; font-size: 30px; z-index: 1000;
+            background: rgba(0,0,0,0.3); border-radius: 50%;
+            user-select: none;
         }
         .next { right: 20px; } .prev { left: 20px; }
-        .prev:hover, .next:hover { color: #fff; transform: scale(1.2); }
 
         footer {
             background-color: #222; color: var(--text-muted);
-            text-align: center; padding: 60px 20px;
+            text-align: center; padding: 40px 20px;
             font-family: var(--font-en); letter-spacing: 0.2em;
             border-top: 1px solid #4a4a4a;
         }
 
-        /* スマホ向け調整 */
         @media (max-width: 768px) {
-            .hero { height: 50vh; min-height: 350px; }
-            .hero-bg { background-position: 40% 50%; }
-            .hero h1 { font-size: 2.4rem; line-height: 1.2; margin-bottom: 10px; }
-            .hero .sub-title { font-size: 0.9rem; letter-spacing: 0.15em; }
-            .hero-content { padding: 30px 15px; width: 90%; box-sizing: border-box; }
-
+            .hero { height: 50vh; min-height: 300px; }
+            .hero-bg { background-position: 40% 90%; }
+            .hero h1 { font-size: 2.5rem; }
+            .hero-content { padding: 30px 20px; width: 80%; }
             section { padding: 60px 20px; }
-            .section-head { margin-bottom: 40px; }
-            .section-head h2 { font-size: 2.2rem; }
-
-            .bio-container { gap: 40px; }
-            .bio-card, .bio-card:nth-child(even) {
-                flex-direction: column; text-align: left; gap: 20px; padding: 30px 20px;
-            }
-            .bio-img { width: 100%; }
-            .bio-img img { width: 100%; height: auto; aspect-ratio: 1 / 1; }
-
-            .gallery-grid { grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); }
-
-            .prev, .next {
-                font-size: 24px; padding: 15px; margin-top: -30px;
-                background-color: rgba(0,0,0,0.4); border-radius: 4px;
-            }
-            .next { right: 10px; } .prev { left: 10px; }
-            .close { top: 15px; right: 15px; font-size: 40px; }
+            .message p { padding: 0 10px; }
+            .prev, .next { padding: 15px; font-size: 20px; }
         }
     </style>
 </head>
@@ -275,311 +224,352 @@
     <div class="hero">
         <div class="hero-bg"></div>
         <div class="hero-content">
-            <span class="sub-title">Welcome to Our Wedding</span>
-            <h1>Masafumi & Nao</h1>
-            <span class="location">KAMAKURA, JAPAN</span>
+            <h1>Thank You</h1>
+            <p style="margin-top: 10px; font-family: var(--font-en); letter-spacing: 0.2em; color: #ccc;">Nov. 22, 2024</p>
         </div>
     </div>
 
     <section class="message">
-        <div class="section-head"><span>Message</span><h2>Greeting</h2></div>
+        <div class="section-head">
+            <span>To Our Guests</span>
+            <h2>Message</h2>
+        </div>
         <p>
-            本日は私たちの結婚式にお越しいただきありがとうございます。<br>
-            ゆかりのある鎌倉で挙式を挙げられたことをとても嬉しく思います。<br>
-            皆様にもお喜びいただけるよう準備してきましたので、ぜひ美味しい料理やお酒をお楽しみください。
+            改めまして 私たち夫婦の結婚式にお越しいただき<br>
+            ありがとうございます。<br>
+            <br>
+            思い出深い鎌倉という地で<br>
+            結婚式を挙げることができたこと、<br>
+            そして皆様にたくさんの祝福をいただいたことを<br>
+            非常にうれしく思います。<br>
+            <br>
+            10年間という長い時間を過ごしてきて<br>
+            これまで振り返ることのなかった思い出を<br>
+            この機会に思い出すことができました。<br>
+            また、これから夫婦として過ごしていくことを<br>
+            実感できる素晴らしい機会となりました。<br>
+            <br>
+            今後は萩原家・松山家双方とも<br>
+            親族として支えあいながら<br>
+            良き家庭を築いていければと思いますので<br>
+            よろしくお願いいたします。
         </p>
         <div class="sign">Masafumi & Nao</div>
     </section>
 
-    <section class="biography">
-        <div class="section-head"><span>Who we are</span><h2>Biography</h2></div>
-        <div class="bio-container">
-            <div class="bio-card">
-                <div class="bio-img"><img src="./masafumi.jpg" alt="Masafumi"></div>
-                <div class="bio-content">
-                    <h3>萩原 将史</h3><span class="name-en">Masafumi Hagiwara</span>
-                    <ul class="bio-list">
-                        <li><strong>生年月日</strong> 1997年8月22日</li>
-                        <li><strong>出身学部</strong> 文学部西洋史学専攻（卒論テーマは「古代ローマにおけるキリスト教迫害史」）</li>
-                        <li><strong>仕事</strong> システムエンジニア⇒ITコンサルタント</li>
-                        <li>
-                            <strong>趣味</strong>
-                            旅、登山、キャンプ、スコッチ、オーディオ、釣り、シュノーケリング、ドライブ、散歩、思想史、生成AI
-                        </li>
-                        <li>
-                            <strong>Music</strong>
-                            サザンオールスターズ、藤井風、相対性理論、Durdn、Herbie Hancock、Roy Hargrove、Eagles、Van Halen、Frank Zappa、Cimafunk、Fred Wesley、Poncho Sanchez、Santana 等
-                        </li>
-                    </ul>
-                </div>
-            </div>
-            <div class="bio-card">
-                <div class="bio-img"><img src="./なお.jpg" alt="Nao"></div>
-                <div class="bio-content">
-                    <h3>松山 奈生</h3><span class="name-en">Nao Matsuyama</span>
-                    <ul class="bio-list">
-                        <li><strong>生年月日</strong> 1996年7月16日</li>
-                        <li><strong>出身学部</strong> 文学部美学美術史学専攻（卒論テーマは「ビッグバンドジャズの巨匠カウント・ベイシーの前/後期の楽曲分析比較」）</li>
-                        <li><strong>仕事</strong> システムエンジニア</li>
-                        <li>
-                            <strong>趣味</strong>
-                            旅、登山、キャンプ、オーディオ、楽器演奏、お酒、シュノーケリング、モータースポーツ観戦、散歩、ホットケーキ巡り
-                        </li>
-                        <li>
-                            <strong>Music</strong>
-                            サザンオールスターズ、藤井風、きくお、電ｷ鯨、Yellow Magic Orchestra、Count Basie、Richard Bona、Joe Zawinul、Joe Dyson、Kenny Dorham、Manu Dibango、Santana、Francis Poulenc、Johannes Brahms 等
-                        </li>
-                    </ul>
-                </div>
-            </div>
+    <!-- Photo Gallery -->
+    <section class="gallery-section">
+        <div class="section-head">
+            <span>Share Memories</span>
+            <h2>Guest Gallery</h2>
         </div>
 
-        <div class="movie-section">
-            <div class="section-head" style="margin-bottom: 30px;">
-                <span>Performance</span>
-                <h3 style="font-family: var(--font-en); color: var(--accent-color); font-size: 1.8rem;">Yamano Big Band Jazz Contest</h3>
-            </div>
-            <div class="video-container">
-                <iframe src="https://www.youtube.com/embed/xAMNHsdgO_Q" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>
-            </div>
-            <p class="movie-caption">二人が出演した山野ビッグバンドジャズコンテストの映像です</p>
+        <div class="gallery-grid" id="galleryGrid">
+            <!-- ここに写真が動的に追加されます -->
         </div>
 
-    </section>
-
-    <section class="gallery">
-        <div class="section-head"><span>Memories</span><h2>Gallery</h2></div>
-        <div class="gallery-grid">
-            <div class="gallery-item" onclick="openGallery('friends')">
-                <img src="./sarcle1.jpg" alt="Music"><div class="gallery-category">Friends & Music <small>View Collection</small></div>
-            </div>
-            <div class="gallery-item" onclick="openGallery('jazz')">
-                <img src="./jazz4.jpg" alt="Jazz"><div class="gallery-category">Jazz Life <small>View Collection</small></div>
-            </div>
-            <div class="gallery-item" onclick="openGallery('trekking')">
-                <img src="./tozan30.jpg" alt="Mountain"><div class="gallery-category">Trekking <small>View Collection</small></div>
-            </div>
-            <div class="gallery-item" onclick="openGallery('family')">
-                <img src="./neko3.jpg" alt="Cat"><div class="gallery-category">Family <small>View Collection</small></div>
-            </div>
-            <div class="gallery-item" onclick="openGallery('scenery')">
-                <img src="./izu1.jpg" alt="View"><div class="gallery-category">Scenery <small>View Collection</small></div>
-            </div>
-            <div class="gallery-item" onclick="openGallery('travel')">
-                <img src="./tohoku1.jpg" alt="Travel"><div class="gallery-category">Travel & Others <small>View Collection</small></div>
-            </div>
+        <div class="load-more-area" id="loadMoreArea">
+            <button class="btn-outline" id="loadMoreBtn">Load More</button>
         </div>
     </section>
 
-    <div id="friendsModal" class="modal">
-        <span class="close" onclick="closeGallery('friends')">&times;</span>
-        <div class="modal-content">
-            <img class="mySlides friends-slide" src="./sarcle1.jpg">
-            <img class="mySlides friends-slide" src="./sarcle2.jpg">
-            <img class="mySlides friends-slide" src="./sarcle3.jpg">
-            <img class="mySlides friends-slide" src="./sarcle4.jpg">
-            <img class="mySlides friends-slide" src="./sarcle5.png">
-            <img class="mySlides friends-slide" src="./sarcle6.jpg">
-            <img class="mySlides friends-slide" src="./sarcle7.jpg">
-            <img class="mySlides friends-slide" src="./sarcle8.jpg">
-            <img class="mySlides friends-slide" src="./sarcle9.jpg">
-            <a class="prev" onclick="plusSlides(-1, 'friends')">&#10094;</a><a class="next" onclick="plusSlides(1, 'friends')">&#10095;</a>
+    <!-- Upload -->
+    <section class="upload-section">
+        <div class="upload-container">
+            <p class="upload-note">
+                素敵な写真を共有していただけると嬉しいです<br>
+                <small style="color: #888;">(選択すると自動でアップロードされます)</small>
+            </p>
+            <label for="fileInput" class="file-input-label" id="uploadBtnLabel">
+                Upload Photos
+            </label>
+            <input type="file" id="fileInput" multiple accept="image/*">
+            <p id="uploadStatus"></p>
         </div>
+    </section>
+
+    <!-- History Link -->
+    <div class="history-link-section">
+        <p style="margin-bottom: 20px; color: #ccc; font-size: 0.9rem;">二人のプロフィールやこれまでの歩みはこちら</p>
+        <a href="./history.html" class="btn-gold">View Our 10 Years History</a>
     </div>
 
-    <div id="jazzModal" class="modal">
-        <span class="close" onclick="closeGallery('jazz')">&times;</span>
-        <div class="modal-content">
-            <img class="mySlides jazz-slide" src="./jazz1.jpg">
-            <img class="mySlides jazz-slide" src="./jazz2.jpg">
-            <img class="mySlides jazz-slide" src="./jazz3.jpg">
-            <img class="mySlides jazz-slide" src="./jazz4.jpg">
-            <img class="mySlides jazz-slide" src="./jazz5.jpg">
-            <img class="mySlides jazz-slide" src="./jazz6.jpg">
-            <img class="mySlides jazz-slide" src="./jazz7.jpg">
-            <img class="mySlides jazz-slide" src="./jazz8.jpg">
-            <a class="prev" onclick="plusSlides(-1, 'jazz')">&#10094;</a><a class="next" onclick="plusSlides(1, 'jazz')">&#10095;</a>
+    <footer>
+        <p>&copy; Masafumi & Nao</p>
+    </footer>
+
+    <!-- Modal -->
+    <div id="myModal" class="modal">
+        <span class="close" onclick="closeModal()">&times;</span>
+        <div class="modal-content" id="modalContent">
+            <!-- スライドはJSで生成 -->
         </div>
+        <a class="prev" onclick="changeSlide(-1)">&#10094;</a>
+        <a class="next" onclick="changeSlide(1)">&#10095;</a>
     </div>
 
-    <div id="trekkingModal" class="modal">
-        <span class="close" onclick="closeGallery('trekking')">&times;</span>
-        <div class="modal-content">
-            <img class="mySlides trekking-slide" src="./tozan1.jpg">
-            <img class="mySlides trekking-slide" src="./tozan2.jpg">
-            <img class="mySlides trekking-slide" src="./tozan3.jpg">
-            <img class="mySlides trekking-slide" src="./tozan4.jpg">
-            <img class="mySlides trekking-slide" src="./tozan5.jpg">
-            <img class="mySlides trekking-slide" src="./tozan6.jpg">
-            <img class="mySlides trekking-slide" src="./tozan7.jpg">
-            <img class="mySlides trekking-slide" src="./tozan8.jpg">
-            <img class="mySlides trekking-slide" src="./tozan9.jpg">
-            <img class="mySlides trekking-slide" src="./tozan10.jpg">
-            <img class="mySlides trekking-slide" src="./tozan11.jpg">
-            <img class="mySlides trekking-slide" src="./tozan12.jpg">
-            <img class="mySlides trekking-slide" src="./tozan13.jpg">
-            <img class="mySlides trekking-slide" src="./tozan14.jpg">
-            <img class="mySlides trekking-slide" src="./tozan15.jpg">
-            <img class="mySlides trekking-slide" src="./tozan16.jpg">
-            <img class="mySlides trekking-slide" src="./tozan17.jpg">
-            <img class="mySlides trekking-slide" src="./tozan18.jpg">
-            <img class="mySlides trekking-slide" src="./tozan19.jpg">
-            <img class="mySlides trekking-slide" src="./tozan20.jpg">
-            <img class="mySlides trekking-slide" src="./tozan21.jpg">
-            <img class="mySlides trekking-slide" src="./tozan22.jpg">
-            <img class="mySlides trekking-slide" src="./tozan23.jpg">
-            <img class="mySlides trekking-slide" src="./tozan24.jpg">
-            <img class="mySlides trekking-slide" src="./tozan25.jpg">
-            <img class="mySlides trekking-slide" src="./tozan26.jpg">
-            <img class="mySlides trekking-slide" src="./tozan27.jpg">
-            <img class="mySlides trekking-slide" src="./tozan28.jpg">
-            <img class="mySlides trekking-slide" src="./tozan29.jpg">
-            <img class="mySlides trekking-slide" src="./tozan30.jpg">
-            <img class="mySlides trekking-slide" src="./tozan31.jpg">
-            <img class="mySlides trekking-slide" src="./tozan32.jpg">
-            <img class="mySlides trekking-slide" src="./tozan33.jpg">
-            <img class="mySlides trekking-slide" src="./tozan34.jpg">
-            <img class="mySlides trekking-slide" src="./tozan35.jpg">
-            <img class="mySlides trekking-slide" src="./tozan38.jpg">
-            <img class="mySlides trekking-slide" src="./tozan39.jpg">
-            <img class="mySlides trekking-slide" src="./tozan40.jpg">
-            <img class="mySlides trekking-slide" src="./tozan41.jpg">
-            <a class="prev" onclick="plusSlides(-1, 'trekking')">&#10094;</a><a class="next" onclick="plusSlides(1, 'trekking')">&#10095;</a>
-        </div>
-    </div>
+    <!-- ★Firebase & Logic Script★ -->
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.0.2/firebase-app.js";
+        import { getFirestore, collection, addDoc, onSnapshot, query, orderBy, serverTimestamp } from "https://www.gstatic.com/firebasejs/11.0.2/firebase-firestore.js";
+        import { getStorage, ref, uploadBytes, getDownloadURL } from "https://www.gstatic.com/firebasejs/11.0.2/firebase-storage.js";
 
-    <div id="familyModal" class="modal">
-        <span class="close" onclick="closeGallery('family')">&times;</span>
-        <div class="modal-content">
-            <img class="mySlides family-slide" src="./neko1.jpg">
-            <img class="mySlides family-slide" src="./neko2.jpg">
-            <img class="mySlides family-slide" src="./neko3.jpg">
-            <img class="mySlides family-slide" src="./neko4.jpg">
-            <img class="mySlides family-slide" src="./neko5.jpg">
-            <a class="prev" onclick="plusSlides(-1, 'family')">&#10094;</a><a class="next" onclick="plusSlides(1, 'family')">&#10095;</a>
-        </div>
-    </div>
+        // --- 1. Firebase Config ---
+        const firebaseConfig = {
+            apiKey: "AIzaSyBXfV9k1NxtzjDklHqx4vXSGKKyJM5RmCg",
+            authDomain: "wedding-photo-54fbf.firebaseapp.com",
+            projectId: "wedding-photo-54fbf",
+            storageBucket: "wedding-photo-54fbf.firebasestorage.app",
+            messagingSenderId: "868959025752",
+            appId: "1:868959025752:web:c491b3ff353c894a69a82d"
+        };
 
-    <div id="sceneryModal" class="modal">
-        <span class="close" onclick="closeGallery('scenery')">&times;</span>
-        <div class="modal-content">
-            <img class="mySlides scenery-slide" src="./wakayama1.jpg">
-            <img class="mySlides scenery-slide" src="./wakayama2.jpg">
-            <img class="mySlides scenery-slide" src="./wakayama3.jpg">
-            <img class="mySlides scenery-slide" src="./wakayama4.jpg">
-            <img class="mySlides scenery-slide" src="./izu1.jpg">
-            <img class="mySlides scenery-slide" src="./izu2.jpg">
-            <img class="mySlides scenery-slide" src="./izu3.jpg">
-            <img class="mySlides scenery-slide" src="./izu4.jpg">
-            <img class="mySlides scenery-slide" src="./izu6.jpg">
-            <img class="mySlides scenery-slide" src="./izu7.jpg">
-            <img class="mySlides scenery-slide" src="./izu8.jpg">
-            <img class="mySlides scenery-slide" src="./izu9.jpg">
-            <img class="mySlides scenery-slide" src="./izu10.jpg">
-            <img class="mySlides scenery-slide" src="./izu11.jpg">
-            <img class="mySlides scenery-slide" src="./izu12.jpg">
-            <img class="mySlides scenery-slide" src="./izu13.jpg">
-            <img class="mySlides scenery-slide" src="./izu14.jpg">
-            <img class="mySlides scenery-slide" src="./kamakura1.jpg">
-            <img class="mySlides scenery-slide" src="./kamakura2.jpg">
-            <img class="mySlides scenery-slide" src="./kamakura3.jpg">
-            <img class="mySlides scenery-slide" src="./kamakura4.jpg">
-            <img class="mySlides scenery-slide" src="./kamakura5.jpg">
-            <img class="mySlides scenery-slide" src="./kamakura6.jpg">
-            <img class="mySlides scenery-slide" src="./kamakura7.jpg">
-            <img class="mySlides scenery-slide" src="./tokushima1.jpg">
-            <img class="mySlides scenery-slide" src="./tokushima2.jpg">
-            <img class="mySlides scenery-slide" src="./tokushima3.jpg">
-            <img class="mySlides scenery-slide" src="./tokushima4.jpg">
-            <img class="mySlides scenery-slide" src="./tokushima5.jpg">
-            <img class="mySlides scenery-slide" src="./tokushima6.jpg">
-            <a class="prev" onclick="plusSlides(-1, 'scenery')">&#10094;</a><a class="next" onclick="plusSlides(1, 'scenery')">&#10095;</a>
-        </div>
-    </div>
+        // Initialize
+        const app = initializeApp(firebaseConfig);
+        const db = getFirestore(app);
+        const storage = getStorage(app);
+        const COLLECTION_NAME = "photos";
 
-    <div id="travelModal" class="modal">
-        <span class="close" onclick="closeGallery('travel')">&times;</span>
-        <div class="modal-content">
-            <img class="mySlides travel-slide" src="./tohoku1.jpg">
-            <img class="mySlides travel-slide" src="./tohoku2.jpg">
-            <img class="mySlides travel-slide" src="./tohoku5.jpg">
-            <img class="mySlides travel-slide" src="./kinjo1.jpg">
-            <img class="mySlides travel-slide" src="./kinjo2.jpg">
-            <img class="mySlides travel-slide" src="./kinjo3.jpg">
-            <img class="mySlides travel-slide" src="./kinjo4.jpg">
-            <img class="mySlides travel-slide" src="./kinjo5.jpg">
-            <img class="mySlides travel-slide" src="./kinjo6.jpg">
-            <img class="mySlides travel-slide" src="./kinjo7.jpg">
-            <img class="mySlides travel-slide" src="./kinjo8.jpg">
-            <img class="mySlides travel-slide" src="./sonota1.jpg">
-            <img class="mySlides travel-slide" src="./sonota2.jpg">
-            <img class="mySlides travel-slide" src="./sonota3.jpg">
-            <img class="mySlides travel-slide" src="./sonota4.jpg">
-            <img class="mySlides travel-slide" src="./sonota5.jpg">
-            <img class="mySlides travel-slide" src="./sonota6.jpg">
-            <img class="mySlides travel-slide" src="./sonota7.jpg">
-            <img class="mySlides travel-slide" src="./sonota8.jpg">
-            <img class="mySlides travel-slide" src="./sonota9.jpg">
-            <img class="mySlides travel-slide" src="./sonota11.jpg">
-            <img class="mySlides travel-slide" src="./sonota12.jpg">
-            <a class="prev" onclick="plusSlides(-1, 'travel')">&#10094;</a><a class="next" onclick="plusSlides(1, 'travel')">&#10095;</a>
-        </div>
-    </div>
+        // --- 2. Image Compression Logic ---
+        const compressImage = async (file) => {
+            return new Promise((resolve, reject) => {
+                const MAX_WIDTH = 1200; // 横幅上限
+                const MAX_HEIGHT = 1200; // 縦幅上限
+                const reader = new FileReader();
+                reader.readAsDataURL(file);
+                reader.onload = (event) => {
+                    const img = new Image();
+                    img.src = event.target.result;
+                    img.onload = () => {
+                        let width = img.width;
+                        let height = img.height;
 
-    <footer><p>&copy; Masafumi & Nao</p></footer>
+                        // サイズ調整
+                        if (width > height) {
+                            if (width > MAX_WIDTH) {
+                                height *= MAX_WIDTH / width;
+                                width = MAX_WIDTH;
+                            }
+                        } else {
+                            if (height > MAX_HEIGHT) {
+                                width *= MAX_HEIGHT / height;
+                                height = MAX_HEIGHT;
+                            }
+                        }
 
-    <script>
-        var slideIndices = { 'friends': 1, 'jazz': 1, 'trekking': 1, 'family': 1, 'scenery': 1, 'travel': 1 };
-        var currentGalleryType = '';
-        var autoSlideTimer = null;
+                        const canvas = document.createElement('canvas');
+                        canvas.width = width;
+                        canvas.height = height;
+                        const ctx = canvas.getContext('2d');
+                        ctx.drawImage(img, 0, 0, width, height);
 
-        function openGallery(type) {
-            currentGalleryType = type;
-            document.getElementById(type + "Modal").style.display = "block";
-            showSlides(slideIndices[type], type, 'next');
+                        // CanvasからBlobへ変換 (JPEG, 品質0.7)
+                        canvas.toBlob((blob) => {
+                            resolve(blob);
+                        }, 'image/jpeg', 0.7);
+                    };
+                    img.onerror = (err) => reject(err);
+                };
+                reader.onerror = (err) => reject(err);
+            });
+        };
+
+        // --- 3. Upload Function ---
+        const fileInput = document.getElementById('fileInput');
+        const statusText = document.getElementById('uploadStatus');
+        const uploadLabel = document.getElementById('uploadBtnLabel');
+
+        fileInput.addEventListener('change', async (e) => {
+            const files = e.target.files;
+            if (files.length === 0) return;
+
+            // UIロック
+            fileInput.disabled = true;
+            uploadLabel.classList.add('disabled');
+            uploadLabel.innerText = "Uploading...";
+
+            let successCount = 0;
+
+            for (let i = 0; i < files.length; i++) {
+                const file = files[i];
+                statusText.innerText = `圧縮中... (${i + 1}/${files.length})`;
+                statusText.style.color = "var(--accent-color)";
+
+                try {
+                    // 圧縮
+                    const compressedBlob = await compressImage(file);
+                    
+                    // アップロード
+                    statusText.innerText = `送信中... (${i + 1}/${files.length})`;
+                    const fileName = `${Date.now()}_${Math.random().toString(36).substring(2)}.jpg`;
+                    const storageRef = ref(storage, `uploads/${fileName}`);
+                    await uploadBytes(storageRef, compressedBlob);
+                    
+                    // URL取得
+                    const downloadURL = await getDownloadURL(storageRef);
+
+                    // DB保存
+                    await addDoc(collection(db, COLLECTION_NAME), {
+                        url: downloadURL,
+                        timestamp: serverTimestamp()
+                    });
+                    successCount++;
+
+                } catch (error) {
+                    console.error("Upload failed:", error);
+                    statusText.innerText = "エラーが発生しました";
+                    statusText.style.color = "red";
+                }
+            }
+
+            // 完了処理
+            fileInput.value = "";
+            fileInput.disabled = false;
+            uploadLabel.classList.remove('disabled');
+            uploadLabel.innerText = "Upload Photos";
+            statusText.innerText = `${successCount}枚の写真をアップロードしました！`;
+            statusText.style.color = "#fff";
+            setTimeout(() => statusText.innerText = "", 5000);
+        });
+
+        // --- 4. Gallery Display (Realtime) ---
+        const galleryGrid = document.getElementById('galleryGrid');
+        let allPhotos = []; // 全写真データ保持用
+        let displayedCount = 0;
+        const INITIAL_LOAD = 12;
+        const LOAD_STEP = 12;
+
+        // データを監視して取得（並び替えはクライアント側で行う簡易実装）
+        const q = query(collection(db, COLLECTION_NAME));
+        
+        onSnapshot(q, (snapshot) => {
+            const tempPhotos = [];
+            snapshot.forEach((doc) => {
+                const data = doc.data();
+                // timestampがない場合(書き込み直後)は現在時刻扱いで先頭にする
+                const ts = data.timestamp ? data.timestamp.toMillis() : Date.now();
+                tempPhotos.push({ id: doc.id, url: data.url, ts: ts });
+            });
+
+            // 新しい順にソート
+            tempPhotos.sort((a, b) => b.ts - a.ts);
+            allPhotos = tempPhotos;
+
+            // ギャラリー再描画（最初はINITIAL_LOAD分だけ）
+            renderGallery();
+        });
+
+        function renderGallery() {
+            galleryGrid.innerHTML = "";
+            const modalContent = document.getElementById('modalContent');
+            modalContent.innerHTML = ""; // モーダルの中身もリセット
+
+            // もっと見るボタン制御
+            const loadMoreArea = document.getElementById('loadMoreArea');
+            const limit = displayedCount === 0 ? INITIAL_LOAD : displayedCount;
+            displayedCount = limit; // 更新
+
+            // 表示ループ
+            for (let i = 0; i < allPhotos.length; i++) {
+                if (i >= limit) break;
+                const photo = allPhotos[i];
+
+                // グリッドアイテム作成
+                const card = document.createElement('div');
+                card.className = 'photo-card';
+                card.innerHTML = `<img src="${photo.url}" alt="Guest Photo">`;
+                // クリックイベント（グローバル関数経由ではなく直接バインド）
+                card.onclick = () => openModalIndex(i);
+                galleryGrid.appendChild(card);
+
+                // モーダル用スライド作成
+                const slide = document.createElement('img');
+                slide.src = photo.url;
+                slide.className = 'mySlides';
+                slide.id = `slide-${i}`;
+                modalContent.appendChild(slide);
+            }
+
+            // もっと見るボタン表示判定
+            if (allPhotos.length > limit) {
+                loadMoreArea.style.display = 'block';
+            } else {
+                loadMoreArea.style.display = 'none';
+            }
+        }
+
+        // もっと見るボタン
+        document.getElementById('loadMoreBtn').addEventListener('click', () => {
+            displayedCount += LOAD_STEP;
+            renderGallery();
+        });
+
+
+        // --- 5. Modal Logic (Global scope for HTML onclick) ---
+        let currentSlideIndex = 0;
+        let autoSlideTimer = null;
+
+        window.openModalIndex = (index) => {
+            currentSlideIndex = index;
+            document.getElementById("myModal").style.display = "block";
+            updateModalDisplay();
             startAutoSlide();
-        }
+        };
 
-        function closeGallery(type) {
-            document.getElementById(type + "Modal").style.display = "none";
-            currentGalleryType = '';
+        window.closeModal = () => {
+            document.getElementById("myModal").style.display = "none";
             stopAutoSlide();
-        }
+        };
 
-        function plusSlides(n, type) {
-            stopAutoSlide();
-            var direction = (n > 0) ? 'next' : 'prev';
-            showSlides(slideIndices[type] += n, type, direction);
-            startAutoSlide();
-        }
-
-        function showSlides(n, type, direction) {
-            var i;
-            var slides = document.getElementsByClassName(type + "-slide");
-            if (n > slides.length) { slideIndices[type] = 1 }
-            if (n < 1) { slideIndices[type] = slides.length }
+        window.changeSlide = (n) => {
+            stopAutoSlide(); // 手動操作でタイマーリセット
             
-            for (i = 0; i < slides.length; i++) {
-                slides[i].style.display = "none";
-                slides[i].classList.remove("anim-right", "anim-left");
+            // アニメーション方向判定
+            const direction = n > 0 ? 'next' : 'prev';
+            const slides = document.getElementsByClassName("mySlides");
+            
+            // 現在のスライドを隠す
+            if(slides[currentSlideIndex]) {
+               slides[currentSlideIndex].className = "mySlides"; // クラスリセット
+            }
+
+            // インデックス更新
+            currentSlideIndex += n;
+            if (currentSlideIndex >= slides.length) currentSlideIndex = 0;
+            if (currentSlideIndex < 0) currentSlideIndex = slides.length - 1;
+
+            updateModalDisplay(direction);
+            startAutoSlide();
+        };
+
+        function updateModalDisplay(direction = 'next') {
+            // 表示更新処理
+            const slides = document.getElementsByClassName("mySlides");
+            // 全て隠す
+            for(let i=0; i<slides.length; i++) {
+                slides[i].classList.remove('active', 'next-enter', 'prev-enter');
+                slides[i].style.display = 'none';
             }
             
-            var currentSlide = slides[slideIndices[type] - 1];
-            currentSlide.style.display = "block";
-            
-            if (direction === 'prev') {
-                currentSlide.classList.add("anim-left");
-            } else {
-                currentSlide.classList.add("anim-right");
+            const target = slides[currentSlideIndex];
+            if(target) {
+                target.style.display = 'block';
+                // アニメーションクラス付与
+                if(direction === 'next') target.classList.add('next-enter');
+                else target.classList.add('prev-enter');
+                
+                // 少し待ってactiveにする（transition発火）
+                setTimeout(() => {
+                    target.classList.remove('next-enter', 'prev-enter');
+                    target.classList.add('active');
+                }, 10);
             }
         }
 
         function startAutoSlide() {
             stopAutoSlide();
             autoSlideTimer = setInterval(() => {
-                if (currentGalleryType) {
-                    showSlides(slideIndices[currentGalleryType] += 1, currentGalleryType, 'next');
-                }
+                window.changeSlide(1);
             }, 3000);
         }
 
@@ -590,45 +580,28 @@
             }
         }
 
-        window.onclick = function(event) {
-            if (event.target.classList.contains('modal')) {
-                var modals = document.getElementsByClassName('modal');
-                for (var i = 0; i < modals.length; i++) {
-                    modals[i].style.display = "none";
-                }
-                currentGalleryType = '';
-                stopAutoSlide();
-            }
-        }
-
-        // --- スマホ用スワイプ処理 ---
+        // スマホスワイプ
         let touchStartX = 0;
         let touchEndX = 0;
+        const modal = document.getElementById('myModal');
 
-        const modalContents = document.querySelectorAll('.modal');
+        modal.addEventListener('touchstart', e => {
+            touchStartX = e.changedTouches[0].screenX;
+            stopAutoSlide();
+        }, {passive: true});
 
-        modalContents.forEach(modal => {
-            modal.addEventListener('touchstart', e => {
-                touchStartX = e.changedTouches[0].screenX;
-                stopAutoSlide();
-            }, {passive: true});
+        modal.addEventListener('touchend', e => {
+            touchEndX = e.changedTouches[0].screenX;
+            if (touchEndX < touchStartX - 50) window.changeSlide(1);
+            if (touchEndX > touchStartX + 50) window.changeSlide(-1);
+        }, {passive: true});
 
-            modal.addEventListener('touchend', e => {
-                touchEndX = e.changedTouches[0].screenX;
-                handleSwipe();
-                startAutoSlide();
-            }, {passive: true});
-        });
+        // モーダル外クリックで閉じる
+        window.onclick = (event) => {
+            if (event.target == modal) window.closeModal();
+        };
 
-        function handleSwipe() {
-            if (!currentGalleryType) return;
-            if (touchEndX < touchStartX - 50) {
-                showSlides(slideIndices[currentGalleryType] += 1, currentGalleryType, 'next');
-            }
-            if (touchEndX > touchStartX + 50) {
-                showSlides(slideIndices[currentGalleryType] -= 1, currentGalleryType, 'prev');
-            }
-        }
     </script>
+
 </body>
 </html>
