@@ -7,8 +7,6 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;600&family=Noto+Serif+JP:wght@300;500&display=swap" rel="stylesheet">
-    <script src="https://cdn.jsdelivr.net/npm/exif-js"></script>
-
     <style>
         /* --- デザイン変数 --- */
         :root {
@@ -21,18 +19,19 @@
             --font-jp: 'Noto Serif JP', serif;
         }
 
+        /* --- ベース設定 --- */
         body {
             margin: 0; padding: 0;
             font-family: var(--font-jp);
             color: var(--text-main);
             background-color: var(--bg-color);
-            line-height: 2.2;
-            letter-spacing: 0.08em;
+            line-height: 2.0;
+            letter-spacing: 0.05em;
         }
         h1, h2, h3 { font-family: var(--font-en); font-weight: normal; margin: 0; color: var(--accent-color); }
         img { max-width: 100%; height: auto; display: block; }
 
-        /* --- Hero --- */
+        /* --- ヒーローセクション --- */
         .hero {
             height: 60vh; position: relative; display: flex;
             justify-content: center; align-items: center;
@@ -42,28 +41,37 @@
         .hero-bg {
             position: absolute; top: 0; left: 0; width: 100%; height: 100%;
             background: url('./header.jpg') no-repeat center 65%/cover;
-            filter: brightness(0.4); z-index: 0;
+            filter: brightness(0.5); z-index: 0;
         }
         .hero-content {
             position: relative; text-align: center; z-index: 10;
-            padding: 60px 40px;
+            padding: 80px 40px;
             border: 1px solid rgba(212, 175, 55, 0.5);
             background: rgba(44, 44, 44, 0.3);
             backdrop-filter: blur(2px);
             box-shadow: 0 0 30px rgba(0,0,0,0.3);
         }
         .hero h1 {
-            font-size: 4rem; letter-spacing: 0.05em; margin-bottom: 0;
+            font-size: 4.5rem; letter-spacing: 0.05em; margin-bottom: 15px;
             text-transform: uppercase;
             text-shadow: 0 0 10px rgba(0,0,0,0.5);
             color: #fff;
         }
+        .hero .sub-title {
+            font-size: 1.3rem; letter-spacing: 0.3em; margin-bottom: 25px; display: block;
+            color: var(--accent-color);
+        }
+        .hero .location {
+            font-family: var(--font-jp); font-size: 1rem; margin-top: 30px;
+            display: inline-block; border-top: 1px solid var(--accent-color); padding-top: 15px;
+            color: var(--text-muted);
+        }
 
-        /* --- Common --- */
-        section { padding: 80px 20px; max-width: 1000px; margin: 0 auto; }
+        /* --- セクション共通 --- */
+        section { padding: 100px 20px; max-width: 1000px; margin: 0 auto; }
         .section-head { text-align: center; margin-bottom: 60px; }
         .section-head h2 {
-            font-size: 2.5rem; margin-bottom: 15px; letter-spacing: 0.1em;
+            font-size: 3rem; margin-bottom: 15px; letter-spacing: 0.1em;
             background: linear-gradient(to right, #bf953f, #fcf6ba, #b38728, #fbf5b7, #aa771c);
             -webkit-background-clip: text;
             color: transparent;
@@ -73,62 +81,114 @@
             font-family: var(--font-en); text-transform: uppercase; letter-spacing: 0.3em;
         }
 
-        /* --- Message --- */
+        /* --- Message (左詰め) --- */
         .message p {
             text-align: left; margin-bottom: 2em; font-size: 1.1rem;
             line-height: 2.4;
             max-width: 600px; margin-left: auto; margin-right: auto;
         }
         .sign {
-            text-align: right; font-family: var(--font-en); font-size: 1.5rem;
-            color: var(--accent-color); margin-top: 40px; font-style: italic;
+            text-align: right; font-family: var(--font-en); font-size: 1.8rem;
+            color: var(--accent-color); margin-top: 50px; font-style: italic;
             max-width: 600px; margin-left: auto; margin-right: auto;
         }
 
-        /* --- Gallery --- */
-        .gallery-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
-            gap: 2px;
+        /* --- Biography (左詰め) --- */
+        .bio-container { display: flex; flex-direction: column; gap: 80px; }
+        .bio-card {
+            display: flex; align-items: center; gap: 50px;
+            padding: 40px;
+            background: var(--card-bg);
+            border: 1px solid #4a4a4a;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+            border-radius: 8px;
         }
-        @media (min-width: 768px) {
-            .gallery-grid { grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); gap: 10px; }
+        /* 以前は flex-direction: row-reverse だったのを修正 */
+        .bio-card:nth-child(even) { 
+            flex-direction: row-reverse; 
+            text-align: left; 
+        }
+        .bio-img { width: 280px; flex-shrink: 0; position: relative; }
+        .bio-img img {
+            width: 100%; height: 350px; object-fit: cover;
+            border: 1px solid var(--accent-color);
+            padding: 5px;
+            background: var(--bg-color);
+        }
+        .bio-content { flex: 1; }
+        .bio-content h3 { font-family: var(--font-jp); font-size: 2rem; margin-bottom: 5px; color: #fff; }
+        .bio-content .name-en { font-family: var(--font-en); color: var(--accent-color); font-size: 1.2rem; display: block; margin-bottom: 30px; }
+        
+        .bio-list { list-style: none; padding: 0; margin: 0; font-size: 1rem; color: var(--text-main); }
+        .bio-list li { margin-bottom: 15px; border-bottom: 1px solid #4a4a4a; padding-bottom: 10px; }
+        .bio-list strong {
+            color: var(--accent-color); font-weight: 500; font-size: 0.9rem; letter-spacing: 0.1em;
+            display: block;
+            margin-bottom: 5px;
         }
 
-        .photo-card {
+        /* --- Movie (YouTube) --- */
+        .movie-container {
+            text-align: center;
+            margin-top: 60px;
+            padding: 20px;
+            background: var(--card-bg);
+            border: 1px solid #4a4a4a;
+            border-radius: 8px;
+        }
+        .video-wrapper {
             position: relative;
-            aspect-ratio: 1 / 1;
+            padding-bottom: 56.25%; /* 16:9 */
+            height: 0;
             overflow: hidden;
-            background: #000;
-            cursor: pointer;
+            max-width: 100%;
         }
-        .photo-card img {
-            width: 100%; height: 100%; object-fit: cover;
-            transition: transform 0.5s;
-            opacity: 0; animation: fadeIn 1s forwards;
+        .video-wrapper iframe {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            border: 1px solid var(--accent-color);
         }
-        .photo-card:hover img { transform: scale(1.1); opacity: 0.8; }
-        @keyframes fadeIn { to { opacity: 1; } }
+        .movie-caption {
+            margin-top: 15px;
+            font-size: 0.9rem;
+            color: var(--text-muted);
+        }
 
-        /* Load More */
-        .load-more-area {
-            text-align: center; margin-top: 40px;
-            display: none;
+        /* --- Gallery --- */
+        .gallery-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 20px; }
+        .gallery-item {
+            position: relative; overflow: hidden;
+            aspect-ratio: 1 / 1; cursor: pointer;
+            border: 1px solid #4a4a4a;
+            transition: border-color 0.3s;
+            border-radius: 8px;
         }
-        .btn-outline {
-            display: inline-block; padding: 10px 30px;
-            border: 1px solid #666; color: #ccc;
-            background: transparent; font-family: var(--font-en);
-            cursor: pointer; transition: 0.3s;
+        .gallery-item:hover { border-color: var(--accent-color); }
+        .gallery-item img {
+            width: 100%; height: 100%; object-fit: cover;
+            transition: transform 0.6s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+            filter: brightness(0.9);
         }
-        .btn-outline:hover { border-color: var(--accent-color); color: var(--accent-color); }
+        .gallery-item:hover img { transform: scale(1.1); filter: brightness(1); }
+        
+        .gallery-category {
+            position: absolute; bottom: 0; left: 0; width: 100%;
+            background: linear-gradient(to top, rgba(44,44,44,0.9), transparent);
+            padding: 20px; box-sizing: border-box;
+            color: #fff; text-shadow: 0 2px 4px rgba(0,0,0,0.5);
+            font-family: var(--font-en);
+        }
+        .gallery-category small { display: block; font-size: 0.7em; color: var(--accent-color); margin-top: 5px; }
 
         /* --- Upload --- */
+        .upload-section { padding-top: 20px; text-align: center; }
         .upload-container {
             margin: 0 auto 60px; padding: 40px;
             border: 1px dashed #555; border-radius: 8px;
             background: rgba(0,0,0,0.2); max-width: 600px;
-            text-align: center;
         }
         .upload-note { font-size: 0.9rem; color: var(--text-muted); margin-bottom: 20px; }
         .file-input-label {
@@ -161,7 +221,7 @@
             box-shadow: 0 0 15px rgba(212, 175, 55, 0.6);
         }
 
-        /* --- Modal --- */
+        /* --- Modal (Popup) --- */
         .modal {
             display: none; position: fixed; z-index: 999; left: 0; top: 0;
             width: 100%; height: 100%; overflow: hidden;
@@ -176,6 +236,7 @@
         .mySlides {
             display: none; max-width: 100%; max-height: 100vh;
             object-fit: contain;
+            /* アニメーション */
             position: absolute;
             opacity: 0;
             transition: transform 0.4s ease-out, opacity 0.4s ease-out;
@@ -200,18 +261,6 @@
         }
         .next { right: 20px; } .prev { left: 20px; }
 
-        /* Admin Buttons */
-        .admin-btn-container {
-            position: absolute; bottom: 30px; left: 50%; transform: translateX(-50%);
-            display: flex; gap: 20px; z-index: 1001;
-        }
-        .admin-btn {
-            background: rgba(255, 255, 255, 0.2); color: white; border: 1px solid white;
-            padding: 10px 20px; cursor: pointer; font-size: 20px; border-radius: 50%;
-            width: 50px; height: 50px; display: flex; justify-content: center; align-items: center;
-        }
-        .admin-btn.delete { background: rgba(255, 0, 0, 0.6); border: none; border-radius: 4px; width: auto; height: auto; font-size: 16px; font-weight: bold;}
-
         footer {
             background-color: #222; color: var(--text-muted);
             text-align: center; padding: 40px 20px;
@@ -219,15 +268,34 @@
             border-top: 1px solid #4a4a4a;
         }
 
+        /* スマホ向け調整 */
         @media (max-width: 768px) {
             .hero { height: 50vh; min-height: 300px; }
-            .hero-bg { background-position: 40% 90%; }
-            .hero h1 { font-size: 2.5rem; }
-            .hero-content { padding: 30px 20px; width: 80%; }
+            .hero-bg { background-position: 40% 50%; }
+            .hero h1 { font-size: 2.4rem; line-height: 1.2; margin-bottom: 10px; }
+            .hero .sub-title { font-size: 0.9rem; letter-spacing: 0.15em; }
+            .hero-content { padding: 30px 15px; width: 90%; box-sizing: border-box; }
+
             section { padding: 60px 20px; }
-            .message p { padding: 0 10px; }
+            .section-head { margin-bottom: 40px; }
+            .section-head h2 { font-size: 2.2rem; }
+
+            .bio-container { gap: 40px; }
+            .bio-card, .bio-card:nth-child(even) {
+                flex-direction: column; text-align: left; gap: 20px; padding: 30px 20px;
+            }
+            .bio-img { width: 100%; }
+            .bio-img img { width: 100%; height: auto; aspect-ratio: 1 / 1; }
+
+            /* Gallery Grid: Mobile 3 columns */
             .gallery-grid { grid-template-columns: repeat(3, 1fr); gap: 5px; }
-            .prev, .next { padding: 15px; font-size: 20px; }
+
+            .prev, .next {
+                font-size: 24px; padding: 15px; margin-top: -30px;
+                background-color: rgba(0,0,0,0.4); border-radius: 4px;
+            }
+            .next { right: 10px; } .prev { left: 10px; }
+            .close { top: 15px; right: 15px; font-size: 40px; }
         }
     </style>
 </head>
@@ -236,16 +304,14 @@
     <div class="hero">
         <div class="hero-bg"></div>
         <div class="hero-content">
-            <h1>Thank You</h1>
-            <p style="margin-top: 10px; font-family: var(--font-en); letter-spacing: 0.2em; color: #ccc;">Nov. 22, 2024</p>
+            <span class="sub-title">Welcome to Our Wedding</span>
+            <h1>Masafumi & Nao</h1>
+            <span class="location">KAMAKURA, JAPAN</span>
         </div>
     </div>
 
     <section class="message">
-        <div class="section-head">
-            <span>To Our Guests</span>
-            <h2>Message</h2>
-        </div>
+        <div class="section-head"><span>Message</span><h2>Greeting</h2></div>
         <p>
             改めまして 私たち夫婦の結婚式にお越しいただき<br>
             ありがとうございます。<br>
@@ -269,20 +335,91 @@
         <div class="sign">Masafumi & Nao</div>
     </section>
 
-    <section class="gallery-section">
-        <div class="section-head">
-            <span>Share Memories</span>
-            <h2>Guest Gallery</h2>
+    <section class="biography">
+        <div class="section-head"><span>Who we are</span><h2>Biography</h2></div>
+        <div class="bio-container">
+            <div class="bio-card">
+                <div class="bio-img"><img src="./masafumi.jpg" alt="Masafumi"></div>
+                <div class="bio-content">
+                    <h3>萩原 将史</h3><span class="name-en">Masafumi Hagiwara</span>
+                    <ul class="bio-list">
+                        <li><strong>生年月日</strong> 1997年8月22日</li>
+                        <li><strong>出身学部</strong> 文学部西洋史学専攻（卒論テーマは「古代ローマにおけるキリスト教迫害史」）</li>
+                        <li><strong>仕事</strong> システムエンジニア⇒ITコンサルタント</li>
+                        <li>
+                            <strong>趣味</strong>
+                            旅、登山、キャンプ、スコッチ、オーディオ、釣り、シュノーケリング、ドライブ、散歩、思想史、生成AI
+                        </li>
+                        <li>
+                            <strong>Music</strong>
+                            サザンオールスターズ、藤井風、相対性理論、Durdn、Herbie Hancock、Roy Hargrove、Eagles、Van Halen、Frank Zappa、Cimafunk、Fred Wesley、Poncho Sanchez、Santana 等
+                        </li>
+                    </ul>
+                </div>
+            </div>
+            <div class="bio-card">
+                <div class="bio-img"><img src="./なお.jpg" alt="Nao"></div>
+                <div class="bio-content">
+                    <h3>松山 奈生</h3><span class="name-en">Nao Matsuyama</span>
+                    <ul class="bio-list">
+                        <li><strong>生年月日</strong> 1996年7月16日</li>
+                        <li><strong>出身学部</strong> 文学部美学美術史学専攻（卒論テーマは「ビッグバンドジャズの巨匠カウント・ベイシーの前/後期の楽曲分析比較」）</li>
+                        <li><strong>仕事</strong> システムエンジニア</li>
+                        <li>
+                            <strong>趣味</strong>
+                            旅、登山、キャンプ、オーディオ、楽器演奏、お酒、シュノーケリング、モータースポーツ観戦、散歩、ホットケーキ巡り
+                        </li>
+                        <li>
+                            <strong>Music</strong>
+                            サザンオールスターズ、藤井風、きくお、電ｷ鯨、Yellow Magic Orchestra、Count Basie、Richard Bona、Joe Zawinul、Joe Dyson、Kenny Dorham、Manu Dibango、Santana、Francis Poulenc、Johannes Brahms 等
+                        </li>
+                    </ul>
+                </div>
+            </div>
         </div>
 
-        <div class="gallery-grid" id="galleryGrid">
+        <div class="movie-container">
+            <div class="section-head" style="margin-bottom: 40px; margin-top: 20px;">
+                <span>Performance</span>
+                <h3 style="font-family: var(--font-en); color: var(--accent-color);">Yamano Big Band Jazz Contest</h3>
             </div>
-        <div class="load-more-area" id="loadMoreArea">
-            <button class="btn-outline" id="loadMoreBtn">Load More</button>
+            <div class="video-wrapper">
+                <iframe width="560" height="315" src="https://www.youtube.com/embed/xAMNHsdgO_Q?si=HMVYjqts3-JcpIqA" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
+            </div>
+            <p class="movie-caption">二人が出演した山野ビッグバンドジャズコンテストの映像です</p>
+        </div>
+    </section>
+
+    <section class="gallery">
+        <div class="section-head"><span>Memories</span><h2>Gallery</h2></div>
+        <div class="gallery-grid">
+            <div class="gallery-item" onclick="openGallery('friends')">
+                <img src="./sarcle1.jpg" alt="Music"><div class="gallery-category">Friends & Music <small>View Collection</small></div>
+            </div>
+            <div class="gallery-item" onclick="openGallery('jazz')">
+                <img src="./jazz4.jpg" alt="Jazz"><div class="gallery-category">Jazz Life <small>View Collection</small></div>
+            </div>
+            <div class="gallery-item" onclick="openGallery('trekking')">
+                <img src="./tozan30.jpg" alt="Mountain"><div class="gallery-category">Trekking <small>View Collection</small></div>
+            </div>
+            <div class="gallery-item" onclick="openGallery('family')">
+                <img src="./neko3.jpg" alt="Cat"><div class="gallery-category">Family <small>View Collection</small></div>
+            </div>
+            <div class="gallery-item" onclick="openGallery('scenery')">
+                <img src="./izu1.jpg" alt="View"><div class="gallery-category">Scenery <small>View Collection</small></div>
+            </div>
+            <div class="gallery-item" onclick="openGallery('travel')">
+                <img src="./tohoku1.jpg" alt="Travel"><div class="gallery-category">Travel & Others <small>View Collection</small></div>
+            </div>
         </div>
     </section>
 
     <section class="upload-section">
+        <div class="section-head">
+            <span>Shared Photos</span>
+            <h2>Guest Gallery</h2>
+        </div>
+
         <div class="upload-container">
             <p class="upload-note">
                 素敵な写真を共有していただけると嬉しいです<br>
@@ -293,6 +430,12 @@
             </label>
             <input type="file" id="fileInput" multiple accept="image/*">
             <p id="uploadStatus"></p>
+        </div>
+
+        <div class="gallery-grid" id="galleryGrid">
+            </div>
+        <div class="load-more-area" id="loadMoreArea">
+            <button class="btn-outline" id="loadMoreBtn">Load More</button>
         </div>
     </section>
 
@@ -305,6 +448,156 @@
         <p>&copy; Masafumi & Nao</p>
     </footer>
 
+    <div id="friendsModal" class="modal">
+        <span class="close" onclick="closeGallery('friends')">&times;</span>
+        <div class="modal-content">
+            <img class="mySlides friends-slide" src="./sarcle1.jpg">
+            <img class="mySlides friends-slide" src="./sarcle2.jpg">
+            <img class="mySlides friends-slide" src="./sarcle3.jpg">
+            <img class="mySlides friends-slide" src="./sarcle4.jpg">
+            <img class="mySlides friends-slide" src="./sarcle5.png">
+            <img class="mySlides friends-slide" src="./sarcle6.jpg">
+            <img class="mySlides friends-slide" src="./sarcle7.jpg">
+            <img class="mySlides friends-slide" src="./sarcle8.jpg">
+            <img class="mySlides friends-slide" src="./sarcle9.jpg">
+            <a class="prev" onclick="plusSlides(-1, 'friends')">&#10094;</a><a class="next" onclick="plusSlides(1, 'friends')">&#10095;</a>
+        </div>
+    </div>
+    <div id="jazzModal" class="modal">
+        <span class="close" onclick="closeGallery('jazz')">&times;</span>
+        <div class="modal-content">
+            <img class="mySlides jazz-slide" src="./jazz1.jpg">
+            <img class="mySlides jazz-slide" src="./jazz2.jpg">
+            <img class="mySlides jazz-slide" src="./jazz3.jpg">
+            <img class="mySlides jazz-slide" src="./jazz4.jpg">
+            <img class="mySlides jazz-slide" src="./jazz5.jpg">
+            <img class="mySlides jazz-slide" src="./jazz6.jpg">
+            <img class="mySlides jazz-slide" src="./jazz7.jpg">
+            <img class="mySlides jazz-slide" src="./jazz8.jpg">
+            <a class="prev" onclick="plusSlides(-1, 'jazz')">&#10094;</a><a class="next" onclick="plusSlides(1, 'jazz')">&#10095;</a>
+        </div>
+    </div>
+    <div id="trekkingModal" class="modal">
+        <span class="close" onclick="closeGallery('trekking')">&times;</span>
+        <div class="modal-content">
+            <img class="mySlides trekking-slide" src="./tozan1.jpg">
+            <img class="mySlides trekking-slide" src="./tozan2.jpg">
+            <img class="mySlides trekking-slide" src="./tozan3.jpg">
+            <img class="mySlides trekking-slide" src="./tozan4.jpg">
+            <img class="mySlides trekking-slide" src="./tozan5.jpg">
+            <img class="mySlides trekking-slide" src="./tozan6.jpg">
+            <img class="mySlides trekking-slide" src="./tozan7.jpg">
+            <img class="mySlides trekking-slide" src="./tozan8.jpg">
+            <img class="mySlides trekking-slide" src="./tozan9.jpg">
+            <img class="mySlides trekking-slide" src="./tozan10.jpg">
+            <img class="mySlides trekking-slide" src="./tozan11.jpg">
+            <img class="mySlides trekking-slide" src="./tozan12.jpg">
+            <img class="mySlides trekking-slide" src="./tozan13.jpg">
+            <img class="mySlides trekking-slide" src="./tozan14.jpg">
+            <img class="mySlides trekking-slide" src="./tozan15.jpg">
+            <img class="mySlides trekking-slide" src="./tozan16.jpg">
+            <img class="mySlides trekking-slide" src="./tozan17.jpg">
+            <img class="mySlides trekking-slide" src="./tozan18.jpg">
+            <img class="mySlides trekking-slide" src="./tozan19.jpg">
+            <img class="mySlides trekking-slide" src="./tozan20.jpg">
+            <img class="mySlides trekking-slide" src="./tozan21.jpg">
+            <img class="mySlides trekking-slide" src="./tozan22.jpg">
+            <img class="mySlides trekking-slide" src="./tozan23.jpg">
+            <img class="mySlides trekking-slide" src="./tozan24.jpg">
+            <img class="mySlides trekking-slide" src="./tozan25.jpg">
+            <img class="mySlides trekking-slide" src="./tozan26.jpg">
+            <img class="mySlides trekking-slide" src="./tozan27.jpg">
+            <img class="mySlides trekking-slide" src="./tozan28.jpg">
+            <img class="mySlides trekking-slide" src="./tozan29.jpg">
+            <img class="mySlides trekking-slide" src="./tozan30.jpg">
+            <img class="mySlides trekking-slide" src="./tozan31.jpg">
+            <img class="mySlides trekking-slide" src="./tozan32.jpg">
+            <img class="mySlides trekking-slide" src="./tozan33.jpg">
+            <img class="mySlides trekking-slide" src="./tozan34.jpg">
+            <img class="mySlides trekking-slide" src="./tozan35.jpg">
+            <img class="mySlides trekking-slide" src="./tozan38.jpg">
+            <img class="mySlides trekking-slide" src="./tozan39.jpg">
+            <img class="mySlides trekking-slide" src="./tozan40.jpg">
+            <img class="mySlides trekking-slide" src="./tozan41.jpg">
+            <a class="prev" onclick="plusSlides(-1, 'trekking')">&#10094;</a><a class="next" onclick="plusSlides(1, 'trekking')">&#10095;</a>
+        </div>
+    </div>
+    <div id="familyModal" class="modal">
+        <span class="close" onclick="closeGallery('family')">&times;</span>
+        <div class="modal-content">
+            <img class="mySlides family-slide" src="./neko1.jpg">
+            <img class="mySlides family-slide" src="./neko2.jpg">
+            <img class="mySlides family-slide" src="./neko3.jpg">
+            <img class="mySlides family-slide" src="./neko4.jpg">
+            <img class="mySlides family-slide" src="./neko5.jpg">
+            <a class="prev" onclick="plusSlides(-1, 'family')">&#10094;</a><a class="next" onclick="plusSlides(1, 'family')">&#10095;</a>
+        </div>
+    </div>
+    <div id="sceneryModal" class="modal">
+        <span class="close" onclick="closeGallery('scenery')">&times;</span>
+        <div class="modal-content">
+            <img class="mySlides scenery-slide" src="./wakayama1.jpg">
+            <img class="mySlides scenery-slide" src="./wakayama2.jpg">
+            <img class="mySlides scenery-slide" src="./wakayama3.jpg">
+            <img class="mySlides scenery-slide" src="./wakayama4.jpg">
+            <img class="mySlides scenery-slide" src="./izu1.jpg">
+            <img class="mySlides scenery-slide" src="./izu2.jpg">
+            <img class="mySlides scenery-slide" src="./izu3.jpg">
+            <img class="mySlides scenery-slide" src="./izu4.jpg">
+            <img class="mySlides scenery-slide" src="./izu6.jpg">
+            <img class="mySlides scenery-slide" src="./izu7.jpg">
+            <img class="mySlides scenery-slide" src="./izu8.jpg">
+            <img class="mySlides scenery-slide" src="./izu9.jpg">
+            <img class="mySlides scenery-slide" src="./izu10.jpg">
+            <img class="mySlides scenery-slide" src="./izu11.jpg">
+            <img class="mySlides scenery-slide" src="./izu12.jpg">
+            <img class="mySlides scenery-slide" src="./izu13.jpg">
+            <img class="mySlides scenery-slide" src="./izu14.jpg">
+            <img class="mySlides scenery-slide" src="./kamakura1.jpg">
+            <img class="mySlides scenery-slide" src="./kamakura2.jpg">
+            <img class="mySlides scenery-slide" src="./kamakura3.jpg">
+            <img class="mySlides scenery-slide" src="./kamakura4.jpg">
+            <img class="mySlides scenery-slide" src="./kamakura5.jpg">
+            <img class="mySlides scenery-slide" src="./kamakura6.jpg">
+            <img class="mySlides scenery-slide" src="./kamakura7.jpg">
+            <img class="mySlides scenery-slide" src="./tokushima1.jpg">
+            <img class="mySlides scenery-slide" src="./tokushima2.jpg">
+            <img class="mySlides scenery-slide" src="./tokushima3.jpg">
+            <img class="mySlides scenery-slide" src="./tokushima4.jpg">
+            <img class="mySlides scenery-slide" src="./tokushima5.jpg">
+            <img class="mySlides scenery-slide" src="./tokushima6.jpg">
+            <a class="prev" onclick="plusSlides(-1, 'scenery')">&#10094;</a><a class="next" onclick="plusSlides(1, 'scenery')">&#10095;</a>
+        </div>
+    </div>
+    <div id="travelModal" class="modal">
+        <span class="close" onclick="closeGallery('travel')">&times;</span>
+        <div class="modal-content">
+            <img class="mySlides travel-slide" src="./tohoku1.jpg">
+            <img class="mySlides travel-slide" src="./tohoku2.jpg">
+            <img class="mySlides travel-slide" src="./tohoku5.jpg">
+            <img class="mySlides travel-slide" src="./kinjo1.jpg">
+            <img class="mySlides travel-slide" src="./kinjo2.jpg">
+            <img class="mySlides travel-slide" src="./kinjo3.jpg">
+            <img class="mySlides travel-slide" src="./kinjo4.jpg">
+            <img class="mySlides travel-slide" src="./kinjo5.jpg">
+            <img class="mySlides travel-slide" src="./kinjo6.jpg">
+            <img class="mySlides travel-slide" src="./kinjo7.jpg">
+            <img class="mySlides travel-slide" src="./kinjo8.jpg">
+            <img class="mySlides travel-slide" src="./sonota1.jpg">
+            <img class="mySlides travel-slide" src="./sonota2.jpg">
+            <img class="mySlides travel-slide" src="./sonota3.jpg">
+            <img class="mySlides travel-slide" src="./sonota4.jpg">
+            <img class="mySlides travel-slide" src="./sonota5.jpg">
+            <img class="mySlides travel-slide" src="./sonota6.jpg">
+            <img class="mySlides travel-slide" src="./sonota7.jpg">
+            <img class="mySlides travel-slide" src="./sonota8.jpg">
+            <img class="mySlides travel-slide" src="./sonota9.jpg">
+            <img class="mySlides travel-slide" src="./sonota11.jpg">
+            <img class="mySlides travel-slide" src="./sonota12.jpg">
+            <a class="prev" onclick="plusSlides(-1, 'travel')">&#10094;</a><a class="next" onclick="plusSlides(1, 'travel')">&#10095;</a>
+        </div>
+    </div>
+
     <div id="myModal" class="modal">
         <span class="close" onclick="closeModal()">&times;</span>
         <div class="modal-content" id="modalContent"></div>
@@ -314,9 +607,10 @@
 
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/11.0.2/firebase-app.js";
-        import { getFirestore, collection, addDoc, onSnapshot, query, orderBy, serverTimestamp, deleteDoc, doc, updateDoc } from "https://www.gstatic.com/firebasejs/11.0.2/firebase-firestore.js";
+        import { getFirestore, collection, addDoc, onSnapshot, query, orderBy, serverTimestamp, deleteDoc, doc } from "https://www.gstatic.com/firebasejs/11.0.2/firebase-firestore.js";
         import { getStorage, ref, uploadBytes, getDownloadURL, deleteObject } from "https://www.gstatic.com/firebasejs/11.0.2/firebase-storage.js";
 
+        // 1. Config
         const firebaseConfig = {
             apiKey: "AIzaSyBXfV9k1NxtzjDklHqx4vXSGKKyJM5RmCg",
             authDomain: "wedding-photo-54fbf.firebaseapp.com",
@@ -331,25 +625,7 @@
         const storage = getStorage(app);
         const COLLECTION_NAME = "photos";
 
-        // Exif Helper
-        const getTakenDate = (file) => {
-            return new Promise((resolve) => {
-                // EXIF.getData is safe to call even if no exif
-                EXIF.getData(file, function() {
-                    const dateStr = EXIF.getTag(this, "DateTimeOriginal");
-                    if (dateStr) {
-                        // "2024:11:22 14:30:00" -> "2024/11/22 14:30:00"
-                        const [date, time] = dateStr.split(" ");
-                        const formattedDate = date.replace(/:/g, "/") + " " + time;
-                        resolve(new Date(formattedDate).getTime());
-                    } else {
-                        resolve(null);
-                    }
-                });
-            });
-        };
-
-        // Compress
+        // 2. Compression
         const compressImage = async (file) => {
             return new Promise((resolve, reject) => {
                 const MAX_WIDTH = 1024; 
@@ -362,12 +638,17 @@
                     img.onload = () => {
                         let width = img.width;
                         let height = img.height;
-                        if (width > height) { if (width > MAX_WIDTH) { height *= MAX_WIDTH / width; width = MAX_WIDTH; } } 
-                        else { if (height > MAX_HEIGHT) { width *= MAX_HEIGHT / height; height = MAX_HEIGHT; } }
+                        if (width > height) {
+                            if (width > MAX_WIDTH) { height *= MAX_WIDTH / width; width = MAX_WIDTH; }
+                        } else {
+                            if (height > MAX_HEIGHT) { width *= MAX_HEIGHT / height; height = MAX_HEIGHT; }
+                        }
                         const canvas = document.createElement('canvas');
-                        canvas.width = width; canvas.height = height;
+                        canvas.width = width;
+                        canvas.height = height;
                         const ctx = canvas.getContext('2d');
                         ctx.drawImage(img, 0, 0, width, height);
+                        
                         canvas.toBlob((blob) => {
                             if (blob) resolve(blob); else reject(new Error("Compression failed"));
                         }, 'image/jpeg', 0.6);
@@ -378,7 +659,7 @@
             });
         };
 
-        // Upload
+        // 3. Upload
         const fileInput = document.getElementById('fileInput');
         const statusText = document.getElementById('uploadStatus');
         const uploadLabel = document.getElementById('uploadBtnLabel');
@@ -395,18 +676,11 @@
 
             for (let i = 0; i < files.length; i++) {
                 const file = files[i];
-                statusText.innerText = `解析中... (${i + 1}/${files.length})`;
+                statusText.innerText = `圧縮中... (${i + 1}/${files.length})`;
                 statusText.style.color = "var(--accent-color)";
 
                 try {
-                    // 1. Exif
-                    const exifDate = await getTakenDate(file);
-                    
-                    // 2. Compress
-                    statusText.innerText = `圧縮中... (${i + 1}/${files.length})`;
                     const compressedBlob = await compressImage(file);
-                    
-                    // 3. Upload
                     statusText.innerText = `送信中... (${i + 1}/${files.length})`;
                     const fileName = `${Date.now()}_${Math.random().toString(36).substring(2)}.jpg`;
                     const storageRef = ref(storage, `uploads/${fileName}`);
@@ -414,14 +688,10 @@
                     await uploadBytes(storageRef, compressedBlob);
                     const downloadURL = await getDownloadURL(storageRef);
 
-                    // 4. DB
-                    const takenAt = exifDate ? exifDate : Date.now(); // Use Exif or Now
-                    
                     await addDoc(collection(db, COLLECTION_NAME), {
                         url: downloadURL,
-                        path: `uploads/${fileName}`,
-                        takenAt: takenAt, 
-                        timestamp: serverTimestamp()
+                        timestamp: serverTimestamp(),
+                        path: `uploads/${fileName}`
                     });
                     successCount++;
                 } catch (error) {
@@ -439,7 +709,7 @@
             setTimeout(() => statusText.innerText = "", 5000);
         });
 
-        // Gallery
+        // 4. Shared Gallery
         const galleryGrid = document.getElementById('galleryGrid');
         let allPhotos = [];
         let displayedCount = 0;
@@ -453,11 +723,11 @@
             const tempPhotos = [];
             snapshot.forEach((doc) => {
                 const data = doc.data();
-                const sortTime = data.takenAt ? data.takenAt : (data.timestamp ? data.timestamp.toMillis() : Date.now());
-                tempPhotos.push({ id: doc.id, url: data.url, path: data.path, sortTime: sortTime });
+                const ts = data.timestamp ? data.timestamp.toMillis() : Date.now();
+                tempPhotos.push({ id: doc.id, url: data.url, path: data.path, ts: ts });
             });
-            // Sort: Oldest -> Newest (Ascending)
-            tempPhotos.sort((a, b) => a.sortTime - b.sortTime);
+            // Sort: Old -> New (Behind)
+            tempPhotos.sort((a, b) => a.ts - b.ts);
             allPhotos = tempPhotos;
             renderGallery();
         });
@@ -468,32 +738,15 @@
             
             let delBtn = document.getElementById('deleteBtn');
             if(delBtn) delBtn.remove();
-            modalContent.innerHTML = ""; // Clear slides
+            modalContent.innerHTML = "";
 
-            // Admin Controls in Modal
-            const adminControls = document.createElement('div');
-            adminControls.id = "adminControls";
-            adminControls.className = "admin-btn-container";
-            adminControls.style.display = "none";
-            
-            const btnPrev = document.createElement('button');
-            btnPrev.innerHTML = "◀"; btnPrev.className = "admin-btn";
-            btnPrev.onclick = () => swapPhotoOrder(-1);
-            
-            const btnDel = document.createElement('button');
-            btnDel.innerText = "🗑️ DELETE"; btnDel.className = "admin-btn delete";
-            btnDel.onclick = deleteCurrentPhoto;
+            const deleteBtn = document.createElement('button');
+            deleteBtn.id = "deleteBtn";
+            deleteBtn.innerText = "🗑️ DELETE";
+            deleteBtn.style.cssText = "position: absolute; bottom: 20px; left: 50%; transform: translateX(-50%); background: red; color: white; border: none; padding: 10px 20px; font-weight: bold; cursor: pointer; z-index: 1001; display: none;";
+            deleteBtn.onclick = deleteCurrentPhoto;
+            document.getElementById('myModal').appendChild(deleteBtn);
 
-            const btnNext = document.createElement('button');
-            btnNext.innerHTML = "▶"; btnNext.className = "admin-btn";
-            btnNext.onclick = () => swapPhotoOrder(1);
-
-            adminControls.appendChild(btnPrev);
-            adminControls.appendChild(btnDel);
-            adminControls.appendChild(btnNext);
-            document.getElementById('myModal').appendChild(adminControls);
-
-            // Load More Logic
             const loadMoreArea = document.getElementById('loadMoreArea');
             const limit = displayedCount === 0 ? INITIAL_LOAD : displayedCount;
             displayedCount = limit;
@@ -528,9 +781,54 @@
             renderGallery();
         });
 
-        // Modal Logic
+        // 5. Static Gallery Logic
+        var slideIndices = { 'friends': 1, 'jazz': 1, 'trekking': 1, 'family': 1, 'scenery': 1, 'travel': 1 };
+        var currentGalleryType = '';
+        var autoSlideTimer = null;
+
+        window.openGallery = function(type) {
+            currentGalleryType = type;
+            document.getElementById(type + "Modal").style.display = "block";
+            showSlides(slideIndices[type], type, 'next');
+            startAutoSlide();
+        }
+
+        window.closeGallery = function(type) {
+            document.getElementById(type + "Modal").style.display = "none";
+            currentGalleryType = '';
+            stopAutoSlide();
+        }
+
+        window.plusSlides = function(n, type) {
+            stopAutoSlide();
+            var direction = (n > 0) ? 'next' : 'prev';
+            showSlides(slideIndices[type] += n, type, direction);
+            startAutoSlide();
+        }
+
+        function showSlides(n, type, direction) {
+            var i;
+            var slides = document.getElementsByClassName(type + "-slide");
+            if (n > slides.length) { slideIndices[type] = 1 }
+            if (n < 1) { slideIndices[type] = slides.length }
+            
+            for (i = 0; i < slides.length; i++) {
+                slides[i].style.display = "none";
+                slides[i].classList.remove("anim-right", "anim-left");
+            }
+            
+            var currentSlide = slides[slideIndices[type] - 1];
+            currentSlide.style.display = "block";
+            
+            if (direction === 'prev') {
+                currentSlide.classList.add("anim-left");
+            } else {
+                currentSlide.classList.add("anim-right");
+            }
+        }
+
+        // 6. Shared Gallery Modal Logic
         let currentSlideIndex = 0;
-        let autoSlideTimer = null;
 
         window.openModalIndex = (index) => {
             currentSlideIndex = index;
@@ -586,10 +884,15 @@
             }
         }
 
+        // 7. Auto Slide & Swipe
         function startAutoSlide() {
             stopAutoSlide();
             autoSlideTimer = setInterval(() => {
-                window.changeSlide(1);
+                if (currentGalleryType) {
+                    window.plusSlides(1, currentGalleryType);
+                } else if (document.getElementById("myModal").style.display === "block") {
+                    window.changeSlide(1);
+                }
             }, 3000);
         }
 
@@ -600,27 +903,40 @@
             }
         }
 
-        // Swipe
+        // Swipe Logic
         let touchStartX = 0;
         let touchEndX = 0;
-        const modal = document.getElementById('myModal');
+        const allModals = document.querySelectorAll('.modal');
 
-        modal.addEventListener('touchstart', e => {
-            touchStartX = e.changedTouches[0].screenX;
-            stopAutoSlide();
-        }, {passive: true});
+        allModals.forEach(m => {
+            m.addEventListener('touchstart', e => {
+                touchStartX = e.changedTouches[0].screenX;
+                stopAutoSlide();
+            }, {passive: true});
 
-        modal.addEventListener('touchend', e => {
-            touchEndX = e.changedTouches[0].screenX;
-            if (touchEndX < touchStartX - 50) window.changeSlide(1);
-            if (touchEndX > touchStartX + 50) window.changeSlide(-1);
-        }, {passive: true});
+            m.addEventListener('touchend', e => {
+                touchEndX = e.changedTouches[0].screenX;
+                if (touchEndX < touchStartX - 50) {
+                    if (currentGalleryType) window.plusSlides(1, currentGalleryType);
+                    else window.changeSlide(1);
+                }
+                if (touchEndX > touchStartX + 50) {
+                    if (currentGalleryType) window.plusSlides(-1, currentGalleryType);
+                    else window.changeSlide(-1);
+                }
+            }, {passive: true});
+        });
 
         window.onclick = (event) => {
-            if (event.target == modal) window.closeModal();
+            if (event.target.classList.contains('modal')) {
+                const modals = document.getElementsByClassName('modal');
+                for(let i=0; i<modals.length; i++) modals[i].style.display = 'none';
+                currentGalleryType = '';
+                stopAutoSlide();
+            }
         };
 
-        // Admin
+        // 8. Admin & Delete
         let clickCount = 0;
         document.querySelector('footer').addEventListener('click', () => {
             clickCount++;
@@ -636,41 +952,8 @@
         });
 
         function toggleAdminView() {
-            const controls = document.getElementById('adminControls');
-            if (controls) controls.style.display = isAdminMode ? 'flex' : 'none';
-        }
-
-        async function swapPhotoOrder(direction) {
-            if (!isAdminMode) return;
-            stopAutoSlide();
-
-            const currentIndex = currentSlideIndex;
-            const targetIndex = currentIndex + direction;
-
-            if (targetIndex < 0 || targetIndex >= allPhotos.length) {
-                alert("これ以上移動できません");
-                return;
-            }
-
-            const currentPhoto = allPhotos[currentIndex];
-            const targetPhoto = allPhotos[targetIndex];
-
-            let newCurrentTime = targetPhoto.sortTime;
-            let newTargetTime = currentPhoto.sortTime;
-
-            if (newCurrentTime === newTargetTime) {
-                if (direction > 0) newCurrentTime += 1;
-                else newCurrentTime -= 1;
-            }
-
-            try {
-                await updateDoc(doc(db, COLLECTION_NAME, currentPhoto.id), { takenAt: newCurrentTime });
-                await updateDoc(doc(db, COLLECTION_NAME, targetPhoto.id), { takenAt: newTargetTime });
-                currentSlideIndex = targetIndex; 
-            } catch (err) {
-                console.error(err);
-                alert("移動失敗");
-            }
+            const delBtn = document.getElementById('deleteBtn');
+            if (delBtn) delBtn.style.display = isAdminMode ? 'block' : 'none';
         }
 
         async function deleteCurrentPhoto() {
@@ -684,7 +967,7 @@
             try {
                 if (photo.path) {
                     const imgRef = ref(storage, photo.path);
-                    await deleteObject(imgRef).catch(e => console.log("skipped"));
+                    await deleteObject(imgRef);
                 }
                 await deleteDoc(doc(db, COLLECTION_NAME, photo.id));
                 alert("削除しました");
