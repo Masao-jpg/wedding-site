@@ -247,7 +247,7 @@
 
         @media (max-width: 768px) {
             .hero { height: 50vh; min-height: 300px; }
-            .hero-bg { background-position: 40% 50%; }
+            .hero-bg { background-position: 40% 90%; }
             .hero h1 { font-size: 2.5rem; }
             .hero-content { padding: 30px 20px; width: 80%; }
             section { padding: 60px 20px; }
@@ -273,14 +273,24 @@
             <h2>Message</h2>
         </div>
         <p>
-            改めまして 私たち夫婦の結婚式にお越しいただきありがとうございます。<br>
+            改めまして 私たち夫婦の結婚式にお越しいただき<br>
+            ありがとうございます。<br>
             <br>
-            思い出深い鎌倉という地で結婚式を挙げることができたこと、そして皆様にたくさんの祝福をいただいたことを非常にうれしく思います。<br>
+            思い出深い鎌倉という地で<br>
+            結婚式を挙げることができたこと、<br>
+            そして皆様にたくさんの祝福をいただいたことを<br>
+            非常にうれしく思います。<br>
             <br>
-            10年間という長い時間を過ごしてきてこれまで振り返ることのなかった思い出をこの機会に思い出すことができました。<br>
-            また、これから夫婦として過ごしていくことを実感できる素晴らしい機会となりました。<br>
+            10年間という長い時間を過ごしてきて<br>
+            これまで振り返ることのなかった思い出を<br>
+            この機会に思い出すことができました。<br>
+            また、これから夫婦として過ごしていくことを<br>
+            実感できる素晴らしい機会となりました。<br>
             <br>
-            今後は萩原家・松山家双方とも親族として支えあいながら良き家庭を築いていければと思いますのでよろしくお願いいたします。
+            今後は萩原家・松山家双方とも<br>
+            親族として支えあいながら<br>
+            良き家庭を築いていければと思いますので<br>
+            よろしくお願いいたします。
         </p>
         <div class="sign">Masafumi & Nao</div>
     </section>
@@ -364,11 +374,12 @@
             });
         };
 
-        // Compress
+        // Compress (Quality Tuned for High Res)
         const compressImage = async (file) => {
             return new Promise((resolve, reject) => {
-                const MAX_WIDTH = 1024; 
-                const MAX_HEIGHT = 1024;
+                // ★変更点：サイズ 1280px、画質 0.75 (高画質重視)
+                const MAX_WIDTH = 1280; 
+                const MAX_HEIGHT = 1280;
                 const reader = new FileReader();
                 reader.readAsDataURL(file);
                 reader.onload = (event) => {
@@ -383,9 +394,10 @@
                         canvas.width = width; canvas.height = height;
                         const ctx = canvas.getContext('2d');
                         ctx.drawImage(img, 0, 0, width, height);
+                        
                         canvas.toBlob((blob) => {
                             if (blob) resolve(blob); else reject(new Error("Compression failed"));
-                        }, 'image/jpeg', 0.6);
+                        }, 'image/jpeg', 0.75); // ★画質0.75
                     };
                     img.onerror = (err) => reject(err);
                 };
@@ -455,7 +467,7 @@
         const paginationArea = document.getElementById('paginationArea');
         let allPhotos = [];
         
-        const ITEMS_PER_PAGE = 24; // 3と4の公倍数
+        const ITEMS_PER_PAGE = 24; 
         let currentPage = 1;
         let totalPages = 1;
         let isAdminMode = false;
@@ -708,7 +720,6 @@
             try {
                 await updateDoc(doc(db, COLLECTION_NAME, currentPhoto.id), { takenAt: newCurrentTime });
                 await updateDoc(doc(db, COLLECTION_NAME, targetPhoto.id), { takenAt: newTargetTime });
-                currentSlideIndex = targetIndex; 
             } catch (err) {
                 console.error(err);
                 alert("移動失敗");
