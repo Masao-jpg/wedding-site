@@ -72,7 +72,6 @@
             font-size: 0.9rem; color: var(--text-muted); display: block;
             font-family: var(--font-en); text-transform: uppercase; letter-spacing: 0.3em;
         }
-        /* 注釈用のスタイル */
         .gallery-note {
             font-size: 0.8rem; color: #888; margin-top: 10px; display: block;
         }
@@ -115,7 +114,7 @@
         .photo-card:hover img { transform: scale(1.1); opacity: 0.8; }
         @keyframes fadeIn { to { opacity: 1; } }
 
-        /* --- Pagination Style --- */
+        /* --- Pagination --- */
         .pagination-area {
             margin-top: 50px;
             display: flex;
@@ -248,7 +247,7 @@
 
         @media (max-width: 768px) {
             .hero { height: 50vh; min-height: 300px; }
-            .hero-bg { background-position: 40% 90%; }
+            .hero-bg { background-position: 40% 50%; }
             .hero h1 { font-size: 2.5rem; }
             .hero-content { padding: 30px 20px; width: 80%; }
             section { padding: 60px 20px; }
@@ -461,16 +460,14 @@
             setTimeout(() => statusText.innerText = "", 5000);
         });
 
-        // Gallery & Pagination Logic
+        // Gallery & Pagination
         const galleryGrid = document.getElementById('galleryGrid');
         const paginationArea = document.getElementById('paginationArea');
         let allPhotos = [];
         
-        // Pagination variables
-        const ITEMS_PER_PAGE = 25;
+        const ITEMS_PER_PAGE = 24; // 3と4の公倍数
         let currentPage = 1;
         let totalPages = 1;
-
         let isAdminMode = false;
 
         const q = query(collection(db, COLLECTION_NAME));
@@ -482,12 +479,10 @@
                 const sortTime = data.takenAt ? data.takenAt : (data.timestamp ? data.timestamp.toMillis() : Date.now());
                 tempPhotos.push({ id: doc.id, url: data.url, path: data.path, sortTime: sortTime });
             });
-            // Sort: Oldest -> Newest (Ascending)
+            // Sort: Oldest -> Newest
             tempPhotos.sort((a, b) => a.sortTime - b.sortTime);
             allPhotos = tempPhotos;
             
-            // Reset to page 1 on new data if preferred, or keep current
-            // (keeping current unless out of bounds)
             totalPages = Math.ceil(allPhotos.length / ITEMS_PER_PAGE);
             if(currentPage > totalPages) currentPage = totalPages > 0 ? totalPages : 1;
 
@@ -498,12 +493,10 @@
             galleryGrid.innerHTML = "";
             const modalContent = document.getElementById('modalContent');
             
-            // Reset modal logic
             let delBtn = document.getElementById('deleteBtn');
             if(delBtn) delBtn.remove();
             modalContent.innerHTML = "";
 
-            // Admin Controls
             const adminControls = document.createElement('div');
             adminControls.id = "adminControls";
             adminControls.className = "admin-btn-container";
@@ -526,16 +519,12 @@
             adminControls.appendChild(btnNext);
             document.getElementById('myModal').appendChild(adminControls);
 
-            // Pagination Slicing
             const startIndex = (currentPage - 1) * ITEMS_PER_PAGE;
             const endIndex = startIndex + ITEMS_PER_PAGE;
             const photosToShow = allPhotos.slice(startIndex, endIndex);
 
-            // Render Grid
             photosToShow.forEach((photo, index) => {
-                // Absolute index in allPhotos (for modal)
                 const absIndex = startIndex + index;
-
                 const card = document.createElement('div');
                 card.className = 'photo-card';
                 card.innerHTML = `<img src="${photo.url}" alt="Guest Photo">`;
@@ -543,9 +532,7 @@
                 galleryGrid.appendChild(card);
             });
 
-            // Prepare Modal Slides (Render ALL for sliding)
-            // *Performance note: For huge lists, dynamic loading is better, 
-            // but for ~200-300 photos, rendering img tags is okay.
+            // Modal Slides (All)
             allPhotos.forEach((photo) => {
                 const slide = document.createElement('img');
                 slide.src = photo.url;
@@ -562,7 +549,6 @@
             paginationArea.innerHTML = "";
             if (totalPages <= 1) return;
 
-            // Prev
             const prevBtn = document.createElement('button');
             prevBtn.className = "page-btn";
             prevBtn.innerText = "<";
@@ -570,7 +556,6 @@
             prevBtn.onclick = () => changePage(currentPage - 1);
             paginationArea.appendChild(prevBtn);
 
-            // Numbers
             for (let i = 1; i <= totalPages; i++) {
                 const pageBtn = document.createElement('button');
                 pageBtn.className = "page-btn";
@@ -580,7 +565,6 @@
                 paginationArea.appendChild(pageBtn);
             }
 
-            // Next
             const nextBtn = document.createElement('button');
             nextBtn.className = "page-btn";
             nextBtn.innerText = ">";
@@ -593,7 +577,6 @@
             if (page < 1 || page > totalPages) return;
             currentPage = page;
             renderGallery();
-            // Scroll to top of gallery
             document.querySelector('.gallery-section').scrollIntoView({ behavior: 'smooth' });
         }
 
@@ -735,7 +718,7 @@
             try {
                 await updateDoc(doc(db, COLLECTION_NAME, currentPhoto.id), { takenAt: newCurrentTime });
                 await updateDoc(doc(db, COLLECTION_NAME, targetPhoto.id), { takenAt: newTargetTime });
-                // Index will be updated by snapshot refresh
+                currentSlideIndex = targetIndex; 
             } catch (err) {
                 console.error(err);
                 alert("移動失敗");
