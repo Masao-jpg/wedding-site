@@ -102,27 +102,45 @@
             overflow: hidden;
             background: #000;
             cursor: pointer;
+            opacity: 0; /* 初期状態は非表示 */
+            transform: translateY(20px); /* 下にずらしておく */
         }
+        
+        /* ★お洒落な出現アニメーション */
+        @keyframes fadeInUp {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        /* JSでこのクラスをつけるとアニメーション開始 */
+        .photo-card.visible {
+            animation: fadeInUp 0.6s cubic-bezier(0.165, 0.84, 0.44, 1) forwards;
+        }
+
         .photo-card img {
             width: 100%; height: 100%; object-fit: cover;
-            transition: transform 0.5s;
-            opacity: 0; animation: fadeIn 1s forwards;
+            transition: transform 0.5s ease;
         }
-        .photo-card:hover img { transform: scale(1.1); opacity: 0.8; }
-        @keyframes fadeIn { to { opacity: 1; } }
+        .photo-card:hover img { transform: scale(1.1); opacity: 0.9; }
 
-        /* Load More */
+        /* Load More Button */
         .load-more-area {
-            text-align: center; margin-top: 40px;
+            text-align: center; margin-top: 60px;
             display: none;
+            transition: opacity 0.3s;
         }
         .btn-outline {
-            display: inline-block; padding: 10px 30px;
+            display: inline-block; padding: 12px 40px;
             border: 1px solid #666; color: #ccc;
             background: transparent; font-family: var(--font-en);
-            cursor: pointer; transition: 0.3s;
+            cursor: pointer; transition: 0.3s; letter-spacing: 0.1em;
+            border-radius: 30px;
         }
-        .btn-outline:hover { border-color: var(--accent-color); color: var(--accent-color); }
+        .btn-outline:hover {
+            border-color: var(--accent-color);
+            color: var(--accent-color);
+            background: rgba(212, 175, 55, 0.1);
+        }
 
         /* --- Upload --- */
         .upload-section { padding-top: 0; text-align: center; }
@@ -222,7 +240,7 @@
 
         @media (max-width: 768px) {
             .hero { height: 50vh; min-height: 300px; }
-            .hero-bg { background-position: 40% 50%; }
+            .hero-bg { background-position: 40% 90%; }
             .hero h1 { font-size: 2.5rem; }
             .hero-content { padding: 30px 20px; width: 80%; }
             section { padding: 60px 20px; }
@@ -434,7 +452,7 @@
             setTimeout(() => statusText.innerText = "", 5000);
         });
 
-        // Gallery
+        // Gallery Logic
         const galleryGrid = document.getElementById('galleryGrid');
         let allPhotos = [];
         let displayedCount = 0;
@@ -451,57 +469,70 @@
                 const sortTime = data.takenAt ? data.takenAt : (data.timestamp ? data.timestamp.toMillis() : Date.now());
                 tempPhotos.push({ id: doc.id, url: data.url, path: data.path, sortTime: sortTime });
             });
-            // Sort: Oldest -> Newest (Ascending)
+            // Sort: Oldest -> Newest
             tempPhotos.sort((a, b) => a.sortTime - b.sortTime);
             allPhotos = tempPhotos;
             renderGallery();
         });
 
+        // ★Smart Render (Append Only for Load More)
         function renderGallery() {
-            galleryGrid.innerHTML = "";
-            const modalContent = document.getElementById('modalContent');
-            
-            let delBtn = document.getElementById('deleteBtn');
-            if(delBtn) delBtn.remove();
-            modalContent.innerHTML = "";
-
-            // Admin Controls
-            const adminControls = document.createElement('div');
-            adminControls.id = "adminControls";
-            adminControls.className = "admin-btn-container";
-            adminControls.style.display = "none";
-            
-            const btnPrev = document.createElement('button');
-            btnPrev.innerHTML = "◀"; btnPrev.className = "admin-btn";
-            btnPrev.onclick = () => swapPhotoOrder(-1);
-            
-            const btnDel = document.createElement('button');
-            btnDel.innerText = "🗑️ DELETE"; btnDel.className = "admin-btn delete";
-            btnDel.onclick = deleteCurrentPhoto;
-
-            const btnNext = document.createElement('button');
-            btnNext.innerHTML = "▶"; btnNext.className = "admin-btn";
-            btnNext.onclick = () => swapPhotoOrder(1);
-
-            adminControls.appendChild(btnPrev);
-            adminControls.appendChild(btnDel);
-            adminControls.appendChild(btnNext);
-            document.getElementById('myModal').appendChild(adminControls);
-
             const loadMoreArea = document.getElementById('loadMoreArea');
-            const limit = displayedCount === 0 ? INITIAL_LOAD : displayedCount;
-            displayedCount = limit;
+            const modalContent = document.getElementById('modalContent');
 
-            for (let i = 0; i < allPhotos.length; i++) {
-                if (i >= limit) break;
+            // First load or total reset (if deletions happened)
+            if (displayedCount === 0 || allPhotos.length < galleryGrid.children.length) {
+                galleryGrid.innerHTML = "";
+                
+                // Admin Controls Reset
+                let delBtn = document.getElementById('deleteBtn');
+                if(delBtn) delBtn.remove();
+                modalContent.innerHTML = "";
+
+                const adminControls = document.createElement('div');
+                adminControls.id = "adminControls";
+                adminControls.className = "admin-btn-container";
+                adminControls.style.display = "none";
+                
+                const btnPrev = document.createElement('button');
+                btnPrev.innerHTML = "◀"; btnPrev.className = "admin-btn";
+                btnPrev.onclick = () => swapPhotoOrder(-1);
+                
+                const btnDel = document.createElement('button');
+                btnDel.innerText = "🗑️ DELETE"; btnDel.className = "admin-btn delete";
+                btnDel.onclick = deleteCurrentPhoto;
+
+                const btnNext = document.createElement('button');
+                btnNext.innerHTML = "▶"; btnNext.className = "admin-btn";
+                btnNext.onclick = () => swapPhotoOrder(1);
+
+                adminControls.appendChild(btnPrev);
+                adminControls.appendChild(btnDel);
+                adminControls.appendChild(btnNext);
+                document.getElementById('myModal').appendChild(adminControls);
+
+                displayedCount = INITIAL_LOAD; // Reset display count
+            }
+
+            const currentDomCount = galleryGrid.children.length;
+            const limit = Math.min(allPhotos.length, displayedCount);
+
+            // Append only new items
+            for (let i = currentDomCount; i < limit; i++) {
                 const photo = allPhotos[i];
 
+                // Card with animation delay
                 const card = document.createElement('div');
                 card.className = 'photo-card';
                 card.innerHTML = `<img src="${photo.url}" alt="Guest Photo">`;
                 card.onclick = () => window.openModalIndex(i);
+                
+                // Stagger animation
+                setTimeout(() => card.classList.add('visible'), (i - currentDomCount) * 100); // 0.1s delay per item
+                
                 galleryGrid.appendChild(card);
 
+                // Modal Slide
                 const slide = document.createElement('img');
                 slide.src = photo.url;
                 slide.className = 'mySlides';
