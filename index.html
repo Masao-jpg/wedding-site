@@ -63,7 +63,7 @@
         section { padding: 80px 20px; max-width: 1000px; margin: 0 auto; }
         .section-head { text-align: center; margin-bottom: 60px; }
         .section-head h2 {
-            font-size: 2.5rem; margin-bottom: 15px; letter-spacing: 0.1em;
+            font-size: 2.5rem; margin-bottom: 5px; letter-spacing: 0.1em;
             background: linear-gradient(to right, #bf953f, #fcf6ba, #b38728, #fbf5b7, #aa771c);
             -webkit-background-clip: text;
             color: transparent;
@@ -71,6 +71,10 @@
         .section-head span {
             font-size: 0.9rem; color: var(--text-muted); display: block;
             font-family: var(--font-en); text-transform: uppercase; letter-spacing: 0.3em;
+        }
+        /* 注釈用のスタイル */
+        .gallery-note {
+            font-size: 0.8rem; color: #888; margin-top: 10px; display: block;
         }
 
         /* --- Message --- */
@@ -102,44 +106,48 @@
             overflow: hidden;
             background: #000;
             cursor: pointer;
-            opacity: 0; /* 初期状態は非表示 */
-            transform: translateY(20px); /* 下にずらしておく */
         }
-        
-        /* ★お洒落な出現アニメーション */
-        @keyframes fadeInUp {
-            from { opacity: 0; transform: translateY(20px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-        
-        /* JSでこのクラスをつけるとアニメーション開始 */
-        .photo-card.visible {
-            animation: fadeInUp 0.6s cubic-bezier(0.165, 0.84, 0.44, 1) forwards;
-        }
-
         .photo-card img {
             width: 100%; height: 100%; object-fit: cover;
-            transition: transform 0.5s ease;
+            transition: transform 0.5s;
+            opacity: 0; animation: fadeIn 1s forwards;
         }
-        .photo-card:hover img { transform: scale(1.1); opacity: 0.9; }
+        .photo-card:hover img { transform: scale(1.1); opacity: 0.8; }
+        @keyframes fadeIn { to { opacity: 1; } }
 
-        /* Load More Button */
-        .load-more-area {
-            text-align: center; margin-top: 60px;
-            display: none;
-            transition: opacity 0.3s;
+        /* --- Pagination Style --- */
+        .pagination-area {
+            margin-top: 50px;
+            display: flex;
+            justify-content: center;
+            gap: 8px;
+            flex-wrap: wrap;
         }
-        .btn-outline {
-            display: inline-block; padding: 12px 40px;
-            border: 1px solid #666; color: #ccc;
-            background: transparent; font-family: var(--font-en);
-            cursor: pointer; transition: 0.3s; letter-spacing: 0.1em;
-            border-radius: 30px;
+        .page-btn {
+            padding: 8px 14px;
+            border: 1px solid #555;
+            background: transparent;
+            color: #ccc;
+            cursor: pointer;
+            font-family: var(--font-en);
+            font-size: 1rem;
+            border-radius: 4px;
+            transition: all 0.3s;
         }
-        .btn-outline:hover {
+        .page-btn:hover {
             border-color: var(--accent-color);
             color: var(--accent-color);
-            background: rgba(212, 175, 55, 0.1);
+        }
+        .page-btn.active {
+            background: var(--accent-color);
+            border-color: var(--accent-color);
+            color: #fff;
+            font-weight: bold;
+        }
+        .page-btn:disabled {
+            opacity: 0.3;
+            cursor: not-allowed;
+            border-color: #444;
         }
 
         /* --- Upload --- */
@@ -292,12 +300,13 @@
         <div class="section-head">
             <span>Share Memories</span>
             <h2>Guest Gallery</h2>
+            <span class="gallery-note">※写真は撮影時刻順に並んでいます</span>
         </div>
 
         <div class="gallery-grid" id="galleryGrid">
             </div>
-        <div class="load-more-area" id="loadMoreArea">
-            <button class="btn-outline" id="loadMoreBtn">Load More</button>
+        
+        <div class="pagination-area" id="paginationArea">
         </div>
     </section>
 
@@ -452,12 +461,16 @@
             setTimeout(() => statusText.innerText = "", 5000);
         });
 
-        // Gallery Logic
+        // Gallery & Pagination Logic
         const galleryGrid = document.getElementById('galleryGrid');
+        const paginationArea = document.getElementById('paginationArea');
         let allPhotos = [];
-        let displayedCount = 0;
-        const INITIAL_LOAD = 12;
-        const LOAD_STEP = 12;
+        
+        // Pagination variables
+        const ITEMS_PER_PAGE = 25;
+        let currentPage = 1;
+        let totalPages = 1;
+
         let isAdminMode = false;
 
         const q = query(collection(db, COLLECTION_NAME));
@@ -469,89 +482,120 @@
                 const sortTime = data.takenAt ? data.takenAt : (data.timestamp ? data.timestamp.toMillis() : Date.now());
                 tempPhotos.push({ id: doc.id, url: data.url, path: data.path, sortTime: sortTime });
             });
-            // Sort: Oldest -> Newest
+            // Sort: Oldest -> Newest (Ascending)
             tempPhotos.sort((a, b) => a.sortTime - b.sortTime);
             allPhotos = tempPhotos;
+            
+            // Reset to page 1 on new data if preferred, or keep current
+            // (keeping current unless out of bounds)
+            totalPages = Math.ceil(allPhotos.length / ITEMS_PER_PAGE);
+            if(currentPage > totalPages) currentPage = totalPages > 0 ? totalPages : 1;
+
             renderGallery();
         });
 
-        // ★Smart Render (Append Only for Load More)
         function renderGallery() {
-            const loadMoreArea = document.getElementById('loadMoreArea');
+            galleryGrid.innerHTML = "";
             const modalContent = document.getElementById('modalContent');
+            
+            // Reset modal logic
+            let delBtn = document.getElementById('deleteBtn');
+            if(delBtn) delBtn.remove();
+            modalContent.innerHTML = "";
 
-            // First load or total reset (if deletions happened)
-            if (displayedCount === 0 || allPhotos.length < galleryGrid.children.length) {
-                galleryGrid.innerHTML = "";
-                
-                // Admin Controls Reset
-                let delBtn = document.getElementById('deleteBtn');
-                if(delBtn) delBtn.remove();
-                modalContent.innerHTML = "";
+            // Admin Controls
+            const adminControls = document.createElement('div');
+            adminControls.id = "adminControls";
+            adminControls.className = "admin-btn-container";
+            adminControls.style.display = "none";
+            
+            const btnPrev = document.createElement('button');
+            btnPrev.innerHTML = "◀"; btnPrev.className = "admin-btn";
+            btnPrev.onclick = () => swapPhotoOrder(-1);
+            
+            const btnDel = document.createElement('button');
+            btnDel.innerText = "🗑️ DELETE"; btnDel.className = "admin-btn delete";
+            btnDel.onclick = deleteCurrentPhoto;
 
-                const adminControls = document.createElement('div');
-                adminControls.id = "adminControls";
-                adminControls.className = "admin-btn-container";
-                adminControls.style.display = "none";
-                
-                const btnPrev = document.createElement('button');
-                btnPrev.innerHTML = "◀"; btnPrev.className = "admin-btn";
-                btnPrev.onclick = () => swapPhotoOrder(-1);
-                
-                const btnDel = document.createElement('button');
-                btnDel.innerText = "🗑️ DELETE"; btnDel.className = "admin-btn delete";
-                btnDel.onclick = deleteCurrentPhoto;
+            const btnNext = document.createElement('button');
+            btnNext.innerHTML = "▶"; btnNext.className = "admin-btn";
+            btnNext.onclick = () => swapPhotoOrder(1);
 
-                const btnNext = document.createElement('button');
-                btnNext.innerHTML = "▶"; btnNext.className = "admin-btn";
-                btnNext.onclick = () => swapPhotoOrder(1);
+            adminControls.appendChild(btnPrev);
+            adminControls.appendChild(btnDel);
+            adminControls.appendChild(btnNext);
+            document.getElementById('myModal').appendChild(adminControls);
 
-                adminControls.appendChild(btnPrev);
-                adminControls.appendChild(btnDel);
-                adminControls.appendChild(btnNext);
-                document.getElementById('myModal').appendChild(adminControls);
+            // Pagination Slicing
+            const startIndex = (currentPage - 1) * ITEMS_PER_PAGE;
+            const endIndex = startIndex + ITEMS_PER_PAGE;
+            const photosToShow = allPhotos.slice(startIndex, endIndex);
 
-                displayedCount = INITIAL_LOAD; // Reset display count
-            }
+            // Render Grid
+            photosToShow.forEach((photo, index) => {
+                // Absolute index in allPhotos (for modal)
+                const absIndex = startIndex + index;
 
-            const currentDomCount = galleryGrid.children.length;
-            const limit = Math.min(allPhotos.length, displayedCount);
-
-            // Append only new items
-            for (let i = currentDomCount; i < limit; i++) {
-                const photo = allPhotos[i];
-
-                // Card with animation delay
                 const card = document.createElement('div');
                 card.className = 'photo-card';
                 card.innerHTML = `<img src="${photo.url}" alt="Guest Photo">`;
-                card.onclick = () => window.openModalIndex(i);
-                
-                // Stagger animation
-                setTimeout(() => card.classList.add('visible'), (i - currentDomCount) * 100); // 0.1s delay per item
-                
+                card.onclick = () => window.openModalIndex(absIndex);
                 galleryGrid.appendChild(card);
+            });
 
-                // Modal Slide
+            // Prepare Modal Slides (Render ALL for sliding)
+            // *Performance note: For huge lists, dynamic loading is better, 
+            // but for ~200-300 photos, rendering img tags is okay.
+            allPhotos.forEach((photo) => {
                 const slide = document.createElement('img');
                 slide.src = photo.url;
                 slide.className = 'mySlides';
                 slide.style.display = 'none';
                 modalContent.appendChild(slide);
-            }
+            });
 
-            if (allPhotos.length > limit) {
-                loadMoreArea.style.display = 'block';
-            } else {
-                loadMoreArea.style.display = 'none';
-            }
+            renderPagination();
             toggleAdminView();
         }
 
-        document.getElementById('loadMoreBtn').addEventListener('click', () => {
-            displayedCount += LOAD_STEP;
+        function renderPagination() {
+            paginationArea.innerHTML = "";
+            if (totalPages <= 1) return;
+
+            // Prev
+            const prevBtn = document.createElement('button');
+            prevBtn.className = "page-btn";
+            prevBtn.innerText = "<";
+            prevBtn.disabled = currentPage === 1;
+            prevBtn.onclick = () => changePage(currentPage - 1);
+            paginationArea.appendChild(prevBtn);
+
+            // Numbers
+            for (let i = 1; i <= totalPages; i++) {
+                const pageBtn = document.createElement('button');
+                pageBtn.className = "page-btn";
+                if (i === currentPage) pageBtn.classList.add("active");
+                pageBtn.innerText = i;
+                pageBtn.onclick = () => changePage(i);
+                paginationArea.appendChild(pageBtn);
+            }
+
+            // Next
+            const nextBtn = document.createElement('button');
+            nextBtn.className = "page-btn";
+            nextBtn.innerText = ">";
+            nextBtn.disabled = currentPage === totalPages;
+            nextBtn.onclick = () => changePage(currentPage + 1);
+            paginationArea.appendChild(nextBtn);
+        }
+
+        function changePage(page) {
+            if (page < 1 || page > totalPages) return;
+            currentPage = page;
             renderGallery();
-        });
+            // Scroll to top of gallery
+            document.querySelector('.gallery-section').scrollIntoView({ behavior: 'smooth' });
+        }
 
         // Modal Logic
         let currentSlideIndex = 0;
@@ -691,7 +735,7 @@
             try {
                 await updateDoc(doc(db, COLLECTION_NAME, currentPhoto.id), { takenAt: newCurrentTime });
                 await updateDoc(doc(db, COLLECTION_NAME, targetPhoto.id), { takenAt: newTargetTime });
-                currentSlideIndex = targetIndex; 
+                // Index will be updated by snapshot refresh
             } catch (err) {
                 console.error(err);
                 alert("移動失敗");
