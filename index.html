@@ -114,6 +114,20 @@
         .photo-card:hover img { transform: scale(1.1); opacity: 0.8; }
         @keyframes fadeIn { to { opacity: 1; } }
 
+        /* ★複数選択用のスタイル */
+        .photo-card.selected {
+            border: 4px solid #ff4444;
+            box-sizing: border-box;
+        }
+        .photo-card.selected::after {
+            content: '✔';
+            position: absolute;
+            top: 50%; left: 50%;
+            transform: translate(-50%, -50%);
+            font-size: 2rem; color: #ff4444;
+            text-shadow: 0 0 5px #000;
+        }
+
         /* --- Pagination --- */
         .pagination-area {
             margin-top: 50px;
@@ -226,28 +240,36 @@
         }
         .next { right: 20px; } .prev { left: 20px; }
 
-        /* Admin Buttons */
-        .admin-btn-container {
-            position: absolute; bottom: 30px; left: 50%; transform: translateX(-50%);
-            display: flex; gap: 20px; z-index: 1001;
+        /* --- Admin Toolbar (Bulk Delete) --- */
+        .admin-toolbar {
+            position: fixed; bottom: 0; left: 0; width: 100%;
+            background: rgba(0,0,0,0.9); padding: 20px;
+            display: none; justify-content: center; gap: 20px;
+            z-index: 2000; border-top: 1px solid #444;
         }
-        .admin-btn {
-            background: rgba(255, 255, 255, 0.2); color: white; border: 1px solid white;
-            padding: 10px 20px; cursor: pointer; font-size: 20px; border-radius: 50%;
-            width: 50px; height: 50px; display: flex; justify-content: center; align-items: center;
+        .btn-danger {
+            background: #ff4444; color: white; border: none;
+            padding: 12px 30px; border-radius: 30px;
+            font-weight: bold; font-size: 1.1rem; cursor: pointer;
+            box-shadow: 0 4px 10px rgba(255,0,0,0.3);
         }
-        .admin-btn.delete { background: rgba(255, 0, 0, 0.6); border: none; border-radius: 4px; width: auto; height: auto; font-size: 16px; font-weight: bold;}
+        .btn-danger:disabled { background: #555; cursor: not-allowed; box-shadow: none; }
+        .btn-cancel {
+            background: transparent; color: #ccc; border: 1px solid #666;
+            padding: 12px 20px; border-radius: 30px; cursor: pointer;
+        }
 
         footer {
             background-color: #222; color: var(--text-muted);
             text-align: center; padding: 40px 20px;
             font-family: var(--font-en); letter-spacing: 0.2em;
             border-top: 1px solid #4a4a4a;
+            padding-bottom: 100px; /* ツールバー用に余白確保 */
         }
 
         @media (max-width: 768px) {
             .hero { height: 50vh; min-height: 300px; }
-            .hero-bg { background-position: 40% 90%; }
+            .hero-bg { background-position: 40% 50%; }
             .hero h1 { font-size: 2.5rem; }
             .hero-content { padding: 30px 20px; width: 80%; }
             section { padding: 60px 20px; }
@@ -339,6 +361,11 @@
         <a class="next" onclick="changeSlide(1)">&#10095;</a>
     </div>
 
+    <div id="adminToolbar" class="admin-toolbar">
+        <button class="btn-cancel" onclick="toggleAdminMode()">Exit Admin</button>
+        <button class="btn-danger" id="bulkDeleteBtn" onclick="bulkDelete()" disabled>削除する (0)</button>
+    </div>
+
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/11.0.2/firebase-app.js";
         import { getFirestore, collection, addDoc, onSnapshot, query, orderBy, serverTimestamp, deleteDoc, doc, updateDoc } from "https://www.gstatic.com/firebasejs/11.0.2/firebase-firestore.js";
@@ -358,7 +385,7 @@
         const storage = getStorage(app);
         const COLLECTION_NAME = "photos";
 
-        // Exif Helper
+        // Exif & Compress
         const getTakenDate = (file) => {
             return new Promise((resolve) => {
                 EXIF.getData(file, function() {
@@ -374,12 +401,10 @@
             });
         };
 
-        // Compress (Quality Tuned for High Res)
         const compressImage = async (file) => {
             return new Promise((resolve, reject) => {
-                // ★変更点：サイズ 1280px、画質 0.75 (高画質重視)
-                const MAX_WIDTH = 1280; 
-                const MAX_HEIGHT = 1280;
+                const MAX_WIDTH = 1920; 
+                const MAX_HEIGHT = 1920;
                 const reader = new FileReader();
                 reader.readAsDataURL(file);
                 reader.onload = (event) => {
@@ -394,10 +419,9 @@
                         canvas.width = width; canvas.height = height;
                         const ctx = canvas.getContext('2d');
                         ctx.drawImage(img, 0, 0, width, height);
-                        
                         canvas.toBlob((blob) => {
                             if (blob) resolve(blob); else reject(new Error("Compression failed"));
-                        }, 'image/jpeg', 0.75); // ★画質0.75
+                        }, 'image/jpeg', 0.85);
                     };
                     img.onerror = (err) => reject(err);
                 };
@@ -405,7 +429,7 @@
             });
         };
 
-        // Upload
+        // Upload Logic
         const fileInput = document.getElementById('fileInput');
         const statusText = document.getElementById('uploadStatus');
         const uploadLabel = document.getElementById('uploadBtnLabel');
@@ -427,19 +451,14 @@
 
                 try {
                     const exifDate = await getTakenDate(file);
-                    
                     statusText.innerText = `圧縮中... (${i + 1}/${files.length})`;
                     const compressedBlob = await compressImage(file);
-                    
                     statusText.innerText = `送信中... (${i + 1}/${files.length})`;
                     const fileName = `${Date.now()}_${Math.random().toString(36).substring(2)}.jpg`;
                     const storageRef = ref(storage, `uploads/${fileName}`);
-                    
                     await uploadBytes(storageRef, compressedBlob);
                     const downloadURL = await getDownloadURL(storageRef);
-
                     const takenAt = exifDate ? exifDate : Date.now();
-                    
                     await addDoc(collection(db, COLLECTION_NAME), {
                         url: downloadURL,
                         path: `uploads/${fileName}`,
@@ -466,11 +485,79 @@
         const galleryGrid = document.getElementById('galleryGrid');
         const paginationArea = document.getElementById('paginationArea');
         let allPhotos = [];
-        
         const ITEMS_PER_PAGE = 24; 
         let currentPage = 1;
         let totalPages = 1;
+        
+        // Admin & Multi-select
         let isAdminMode = false;
+        let selectedPhotoIds = new Set();
+
+        // Export global functions
+        window.toggleAdminMode = () => {
+            isAdminMode = !isAdminMode;
+            selectedPhotoIds.clear(); // Exit時リセット
+            updateAdminUI();
+            renderGallery();
+        };
+
+        window.handleClickPhoto = (absIndex) => {
+            if (isAdminMode) {
+                const photo = allPhotos[absIndex];
+                if (selectedPhotoIds.has(photo.id)) {
+                    selectedPhotoIds.delete(photo.id);
+                } else {
+                    selectedPhotoIds.add(photo.id);
+                }
+                renderGallery(); // Re-render to show selection style
+                updateAdminUI();
+            } else {
+                window.openModalIndex(absIndex);
+            }
+        };
+
+        window.bulkDelete = async () => {
+            if (selectedPhotoIds.size === 0) return;
+            if (!confirm(`${selectedPhotoIds.size}枚の写真を削除しますか？`)) return;
+
+            const btn = document.getElementById('bulkDeleteBtn');
+            btn.disabled = true;
+            btn.innerText = "削除中...";
+
+            const deletePromises = Array.from(selectedPhotoIds).map(async (id) => {
+                const photo = allPhotos.find(p => p.id === id);
+                if (!photo) return;
+                try {
+                    if (photo.path) {
+                        const imgRef = ref(storage, photo.path);
+                        await deleteObject(imgRef).catch(e => console.log("skipped"));
+                    }
+                    await deleteDoc(doc(db, COLLECTION_NAME, photo.id));
+                } catch (err) {
+                    console.error("Delete failed", err);
+                }
+            });
+
+            await Promise.all(deletePromises);
+            
+            selectedPhotoIds.clear();
+            updateAdminUI();
+            alert("削除完了しました");
+            // snapshot listener will update gallery
+        };
+
+        function updateAdminUI() {
+            const toolbar = document.getElementById('adminToolbar');
+            const bulkBtn = document.getElementById('bulkDeleteBtn');
+            
+            if (isAdminMode) {
+                toolbar.style.display = "flex";
+                bulkBtn.innerText = `削除する (${selectedPhotoIds.size})`;
+                bulkBtn.disabled = selectedPhotoIds.size === 0;
+            } else {
+                toolbar.style.display = "none";
+            }
+        }
 
         const q = query(collection(db, COLLECTION_NAME));
         
@@ -481,7 +568,6 @@
                 const sortTime = data.takenAt ? data.takenAt : (data.timestamp ? data.timestamp.toMillis() : Date.now());
                 tempPhotos.push({ id: doc.id, url: data.url, path: data.path, sortTime: sortTime });
             });
-            // Sort: Oldest -> Newest
             tempPhotos.sort((a, b) => a.sortTime - b.sortTime);
             allPhotos = tempPhotos;
             
@@ -494,32 +580,7 @@
         function renderGallery() {
             galleryGrid.innerHTML = "";
             const modalContent = document.getElementById('modalContent');
-            
-            let delBtn = document.getElementById('deleteBtn');
-            if(delBtn) delBtn.remove();
             modalContent.innerHTML = "";
-
-            const adminControls = document.createElement('div');
-            adminControls.id = "adminControls";
-            adminControls.className = "admin-btn-container";
-            adminControls.style.display = "none";
-            
-            const btnPrev = document.createElement('button');
-            btnPrev.innerHTML = "◀"; btnPrev.className = "admin-btn";
-            btnPrev.onclick = () => swapPhotoOrder(-1);
-            
-            const btnDel = document.createElement('button');
-            btnDel.innerText = "🗑️ DELETE"; btnDel.className = "admin-btn delete";
-            btnDel.onclick = deleteCurrentPhoto;
-
-            const btnNext = document.createElement('button');
-            btnNext.innerHTML = "▶"; btnNext.className = "admin-btn";
-            btnNext.onclick = () => swapPhotoOrder(1);
-
-            adminControls.appendChild(btnPrev);
-            adminControls.appendChild(btnDel);
-            adminControls.appendChild(btnNext);
-            document.getElementById('myModal').appendChild(adminControls);
 
             const startIndex = (currentPage - 1) * ITEMS_PER_PAGE;
             const endIndex = startIndex + ITEMS_PER_PAGE;
@@ -529,12 +590,18 @@
                 const absIndex = startIndex + index;
                 const card = document.createElement('div');
                 card.className = 'photo-card';
+                
+                // Selection Style
+                if (selectedPhotoIds.has(photo.id)) {
+                    card.classList.add('selected');
+                }
+
                 card.innerHTML = `<img src="${photo.url}" alt="Guest Photo">`;
-                card.onclick = () => window.openModalIndex(absIndex);
+                card.onclick = () => window.handleClickPhoto(absIndex);
                 galleryGrid.appendChild(card);
             });
 
-            // Modal Slides (All)
+            // Modal Slides
             allPhotos.forEach((photo) => {
                 const slide = document.createElement('img');
                 slide.src = photo.url;
@@ -544,7 +611,6 @@
             });
 
             renderPagination();
-            toggleAdminView();
         }
 
         function renderPagination() {
@@ -654,7 +720,6 @@
             }
         }
 
-        // Swipe
         let touchStartX = 0;
         let touchEndX = 0;
         const modal = document.getElementById('myModal');
@@ -674,79 +739,18 @@
             if (event.target == modal) window.closeModal();
         };
 
-        // Admin
+        // Activate Admin
         let clickCount = 0;
         document.querySelector('footer').addEventListener('click', () => {
             clickCount++;
             if (clickCount === 5) {
                 const pass = prompt("Enter Admin Password:");
                 if (pass === "1122") {
-                    isAdminMode = !isAdminMode;
-                    alert(isAdminMode ? "管理者モード: ON" : "管理者モード: OFF");
-                    toggleAdminView();
+                    window.toggleAdminMode();
                 }
                 clickCount = 0;
             }
         });
-
-        function toggleAdminView() {
-            const controls = document.getElementById('adminControls');
-            if (controls) controls.style.display = isAdminMode ? 'flex' : 'none';
-        }
-
-        async function swapPhotoOrder(direction) {
-            if (!isAdminMode) return;
-            stopAutoSlide();
-
-            const currentIndex = currentSlideIndex;
-            const targetIndex = currentIndex + direction;
-
-            if (targetIndex < 0 || targetIndex >= allPhotos.length) {
-                alert("これ以上移動できません");
-                return;
-            }
-
-            const currentPhoto = allPhotos[currentIndex];
-            const targetPhoto = allPhotos[targetIndex];
-
-            let newCurrentTime = targetPhoto.sortTime;
-            let newTargetTime = currentPhoto.sortTime;
-
-            if (newCurrentTime === newTargetTime) {
-                if (direction > 0) newCurrentTime += 1;
-                else newCurrentTime -= 1;
-            }
-
-            try {
-                await updateDoc(doc(db, COLLECTION_NAME, currentPhoto.id), { takenAt: newCurrentTime });
-                await updateDoc(doc(db, COLLECTION_NAME, targetPhoto.id), { takenAt: newTargetTime });
-            } catch (err) {
-                console.error(err);
-                alert("移動失敗");
-            }
-        }
-
-        async function deleteCurrentPhoto() {
-            if (!isAdminMode) return;
-            stopAutoSlide();
-            if (!confirm("削除しますか？")) { startAutoSlide(); return; }
-
-            const photo = allPhotos[currentSlideIndex];
-            if (!photo) return;
-
-            try {
-                if (photo.path) {
-                    const imgRef = ref(storage, photo.path);
-                    await deleteObject(imgRef).catch(e => console.log("skipped"));
-                }
-                await deleteDoc(doc(db, COLLECTION_NAME, photo.id));
-                alert("削除しました");
-                window.closeModal();
-            } catch (err) {
-                console.error(err);
-                alert("削除失敗");
-            }
-        }
     </script>
 </body>
 </html>
